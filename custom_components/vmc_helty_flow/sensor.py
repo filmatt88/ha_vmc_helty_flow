@@ -181,6 +181,7 @@ async def async_setup_entry(
         VmcHeltyAirQualityAlertBinarySensor(coordinator),
         VmcHeltyCondensationRiskBinarySensor(coordinator),
         VmcHeltyOfflineBinarySensor(coordinator),
+        VmcHeltyFilterWarningBinarySensor(coordinator),
         VmcHeltyLastResponseSensor(coordinator),
         VmcHeltyFilterHoursSensor(coordinator),
         VmcHeltyFilterLifePercentageSensor(coordinator),
@@ -427,6 +428,55 @@ class VmcHeltyOfflineBinarySensor(VmcHeltyEntity, BinarySensorEntity):
     def is_on(self) -> bool:
         """Return True when the device is considered offline by coordinator."""
         return not self.coordinator.last_update_success
+
+
+class VmcHeltyFilterWarningBinarySensor(VmcHeltyEntity, BinarySensorEntity):
+    """Alert when filter life is at or below the warning threshold.
+
+    Turns ON when remaining filter life falls to FILTER_STATUS_POOR (10%) or below,
+    indicating the filter should be replaced soon.
+    """
+
+    def __init__(self, coordinator):
+        """Initialize the sensor."""
+        super().__init__(coordinator)
+        self._attr_unique_id = f"{coordinator.name_slug}_filter_warning"
+        self._attr_name = f"{ENTITY_NAME_PREFIX} {coordinator.name} Filter Warning"
+        self._attr_device_class = BinarySensorDeviceClass.PROBLEM
+        self._attr_icon = "mdi:air-filter-alert"
+
+    @property
+    def is_on(self) -> bool:
+        """Return True when filter life is at or below the warning threshold."""
+        if not self.coordinator.data:
+            return False
+
+        filter_hours = self.coordinator.data.get("filter_hours")
+        if filter_hours is None:
+            return False
+
+        remaining_hours = min(FILTER_MAX_HOURS, max(0, int(filter_hours)))
+        life_percentage = (remaining_hours / FILTER_MAX_HOURS) * 100
+        return life_percentage <= FILTER_STATUS_POOR
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any] | None:
+        """Return remaining filter life details."""
+        if not self.coordinator.data:
+            return None
+
+        filter_hours = self.coordinator.data.get("filter_hours")
+        if filter_hours is None:
+            return None
+
+        remaining_hours = min(FILTER_MAX_HOURS, max(0, int(filter_hours)))
+        life_percentage = round((remaining_hours / FILTER_MAX_HOURS) * 100, 1)
+
+        return {
+            "filter_hours_remaining": remaining_hours,
+            "filter_life_percentage": life_percentage,
+            "filter_max_hours": FILTER_MAX_HOURS,
+        }
 
 
 class VmcHeltyLastResponseSensor(VmcHeltyEntity, SensorEntity):

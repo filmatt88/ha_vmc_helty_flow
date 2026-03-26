@@ -558,13 +558,13 @@ esac_config:
   - **Effort**: 2h
   - **Priority**: 🟢 Bassa
 
-- [ ] **SENS-005**: Implementa `VmcHeltyFilterWarningBinarySensor`
-  - [ ] Crea classe in `sensor.py`
-  - [ ] ON quando filter_hours > 90% massimo (~15970h su 17744h)
-  - [ ] Device class: problem
-  - [ ] Icon: mdi:air-filter-alert
-  - [ ] **Criteri successo**: Trigger ON a ~15970h, OFF dopo reset
-  - **Effort**: 1h
+- [x] **SENS-005**: Implementa `VmcHeltyFilterWarningBinarySensor`
+  - [x] Crea classe in `sensor.py`
+  - [x] ON quando filter_hours > 90% massimo (~15970h su 17744h)
+  - [x] Device class: problem
+  - [x] Icon: mdi:air-filter-alert
+  - [x] **Criteri successo**: Trigger ON a ~15970h, OFF dopo reset
+  - **Effort**: 1h ✅ **COMPLETATO 2026-03-26**
   - **Priority**: 🔴 Alta
 
 **Sprint 2.1 Total Effort**: ~22 ore

@@ -63,7 +63,9 @@ async def test_async_setup_entry(mock_hass, mock_config_entry, mock_coordinator)
     async_add_entities.assert_called_once()
     entities = async_add_entities.call_args[0][0]
 
-    assert len(entities) == 25  # ResetFilterButton moved to button.py platform
+    assert (
+        len(entities) == 26
+    )  # 20 main sensors + 5 binary sensors + 1 last response sensor
     sensor_entities = [e for e in entities if isinstance(e, VmcHeltySensor)]
     assert len(sensor_entities) >= 5  # At least the 5 main sensors
 
