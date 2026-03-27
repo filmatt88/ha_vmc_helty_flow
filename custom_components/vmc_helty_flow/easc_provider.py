@@ -131,7 +131,7 @@ class EASCDataProvider:
     # Public API
     # ------------------------------------------------------------------
 
-    def get_temperature(self, source: str) -> float | None:
+    def get_temperature(self, source: str | None) -> float | None:
         """Return internal temperature in °C from *source*.
 
         ``source`` is either :data:`~.const.EASC_SOURCE_VMC` (read from the
@@ -147,7 +147,7 @@ class EASCDataProvider:
             Temperature in °C, or ``None`` if both the external source
             **and** the VMC fallback are unavailable.
         """
-        if source == EASC_SOURCE_VMC:
+        if not source or source == EASC_SOURCE_VMC:
             value = self._vmc_temperature_internal()
             _LOGGER.debug("EASC temp_int: source=vmc value=%s°C", value)
             return value
@@ -168,7 +168,7 @@ class EASCDataProvider:
         _LOGGER.debug("EASC temp_int: source=%s value=%s°C", source, value)
         return value
 
-    def get_temperature_external(self, source: str) -> float | None:
+    def get_temperature_external(self, source: str | None) -> float | None:
         """Return external temperature in °C from *source*.
 
         Like :meth:`get_temperature` but falls back to the VMC *external*
@@ -182,7 +182,7 @@ class EASCDataProvider:
             Temperature in °C, or ``None`` if both the external source
             **and** the VMC fallback are unavailable.
         """
-        if source == EASC_SOURCE_VMC:
+        if not source or source == EASC_SOURCE_VMC:
             value = self._vmc_temperature_external()
             _LOGGER.debug("EASC temp_ext: source=vmc value=%s°C", value)
             return value
@@ -203,7 +203,7 @@ class EASCDataProvider:
         _LOGGER.debug("EASC temp_ext: source=%s value=%s°C", source, value)
         return value
 
-    def get_humidity(self, source: str) -> float | None:
+    def get_humidity(self, source: str | None) -> float | None:
         """Return relative humidity in percent (``0-100``) from *source*.
 
         ``source`` is either :data:`~.const.EASC_SOURCE_VMC` (read from the
@@ -219,7 +219,7 @@ class EASCDataProvider:
             Humidity in percent, or ``None`` if both the external source
             **and** the VMC fallback are unavailable.
         """
-        if source == EASC_SOURCE_VMC:
+        if not source or source == EASC_SOURCE_VMC:
             value = self._vmc_humidity()
             _LOGGER.debug("EASC humidity: source=vmc value=%s%%", value)
             return value

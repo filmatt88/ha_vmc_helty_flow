@@ -118,15 +118,63 @@
           "scan_interval": "Intervalo de actualización (segundos)",
           "timeout": "Tiempo de espera de conexiones (segundos)",
           "retry_attempts": "Intentos de reconexión",
-          "room_volume": "Volumen de la habitación (m³)"
+          "room_volume": "Volumen de la habitación (m³)",
+          "configure_easc": "Configurar sensores avanzados (EASC)"
         },
         "data_description": {
           "scan_interval": "Frecuencia de actualización de datos desde el dispositivo VMC (30-600 segundos)",
           "timeout": "Tiempo de espera para conexiones TCP al dispositivo (5-60 segundos)",
           "retry_attempts": "Número de intentos en caso de error de comunicación (1-10)",
-          "room_volume": "Volumen de la habitación en metros cúbicos para cálculos precisos de renovación de aire (1-1000 m³)"
+          "room_volume": "Volumen de la habitación en metros cúbicos para cálculos precisos de renovación de aire (1-1000 m³)",
+          "configure_easc": "Marcar para abrir la configuración de sensores avanzados (humedad absoluta, punto de rocío, índice de confort, delta punto de rocío)"
+        }
+      },
+      "advanced_sensors": {
+        "title": "Sensores Avanzados EASC",
+        "description": "Configure las fuentes de datos para los sensores avanzados calculados. Seleccione una entidad de HA o deje vacío para usar los datos del dispositivo VMC.",
+        "data": {
+          "abs_hum_enabled": "Activar Humedad Absoluta",
+          "abs_hum_temperature_source": "Humedad Absoluta — fuente temperatura",
+          "abs_hum_humidity_source": "Humedad Absoluta — fuente humedad",
+          "abs_hum_formula": "Humedad Absoluta — fórmula",
+          "dew_point_enabled": "Activar Punto de Rocío",
+          "dew_point_temperature_source": "Punto de Rocío — fuente temperatura",
+          "dew_point_humidity_source": "Punto de Rocío — fuente humedad",
+          "dew_point_formula": "Punto de Rocío — fórmula",
+          "comfort_index_enabled": "Activar Índice de Confort",
+          "comfort_index_temperature_source": "Índice de Confort — fuente temperatura",
+          "comfort_index_humidity_source": "Índice de Confort — fuente humedad",
+          "comfort_index_formula": "Índice de Confort — fórmula",
+          "dew_point_delta_enabled": "Activar Delta Punto de Rocío",
+          "dew_point_delta_temperature_internal": "Delta Rocío — temperatura interior",
+          "dew_point_delta_temperature_external": "Delta Rocío — temperatura exterior",
+          "dew_point_delta_humidity_source": "Delta Rocío — fuente humedad",
+          "dew_point_delta_formula": "Delta Rocío — fórmula"
+        },
+        "data_description": {
+          "abs_hum_enabled": "Activar el sensor de humedad absoluta calculada (g/m³)",
+          "abs_hum_temperature_source": "Seleccionar un sensor de temperatura o dejar vacío para usar el VMC",
+          "abs_hum_humidity_source": "Seleccionar un sensor de humedad o dejar vacío para usar el VMC",
+          "abs_hum_formula": "Magnus-Tetens (estándar) o August-Roche-Magnus (OMM, más preciso 0-60°C)",
+          "dew_point_enabled": "Activar el sensor de punto de rocío calculado (°C)",
+          "dew_point_temperature_source": "Seleccionar un sensor de temperatura o dejar vacío para usar el VMC",
+          "dew_point_humidity_source": "Seleccionar un sensor de humedad o dejar vacío para usar el VMC",
+          "dew_point_formula": "Magnus-Tetens (estándar) o August-Roche-Magnus (OMM, más preciso 0-60°C)",
+          "comfort_index_enabled": "Activar el sensor de índice de confort termoigrométrico (0-100)",
+          "comfort_index_temperature_source": "Seleccionar un sensor de temperatura o dejar vacío para usar el VMC",
+          "comfort_index_humidity_source": "Seleccionar un sensor de humedad o dejar vacío para usar el VMC",
+          "comfort_index_formula": "Magnus-Tetens (estándar) o August-Roche-Magnus (OMM, más preciso 0-60°C)",
+          "dew_point_delta_enabled": "Activar el sensor de delta entre punto de rocío interior y exterior (°C)",
+          "dew_point_delta_temperature_internal": "Seleccionar un sensor para la temperatura interior o dejar vacío para el VMC",
+          "dew_point_delta_temperature_external": "Seleccionar un sensor para la temperatura exterior o dejar vacío para el VMC",
+          "dew_point_delta_humidity_source": "Seleccionar un sensor de humedad o dejar vacío para usar el VMC",
+          "dew_point_delta_formula": "Magnus-Tetens (estándar) o August-Roche-Magnus (OMM, más preciso 0-60°C)"
         }
       }
+    },
+    "error": {
+      "invalid_easc_source": "Entidad inválida o no disponible",
+      "invalid_easc_formula": "Fórmula inválida: seleccione 'magnus' o 'custom'"
     }
   },
   "selector": {

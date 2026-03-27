@@ -131,7 +131,7 @@
       },
       "advanced_sensors": {
         "title": "Sensori Avanzati EASC",
-        "description": "Configura le sorgenti dati per i sensori avanzati calcolati. Usa 'vmc' per leggere dal dispositivo VMC oppure inserisci un entity_id Home Assistant (es. sensor.temperatura_soggiorno).",
+        "description": "Configura le sorgenti dati per i sensori avanzati calcolati. Seleziona un'entità HA oppure lascia vuoto per usare i dati del dispositivo VMC.",
         "data": {
           "abs_hum_enabled": "Abilita Umidità Assoluta",
           "abs_hum_temperature_source": "Umidità Assoluta — sorgente temperatura",
@@ -153,22 +153,22 @@
         },
         "data_description": {
           "abs_hum_enabled": "Attiva il sensore di umidità assoluta calcolata (g/m³)",
-          "abs_hum_temperature_source": "'vmc' oppure entity_id (es. sensor.temp_soggiorno)",
-          "abs_hum_humidity_source": "'vmc' oppure entity_id (es. sensor.umidita_soggiorno)",
-          "abs_hum_formula": "'magnus' (Magnus-Tetens) oppure 'custom' (August-Roche-Magnus, WMO)",
+          "abs_hum_temperature_source": "Seleziona un sensore di temperatura oppure lascia vuoto per usare il VMC",
+          "abs_hum_humidity_source": "Seleziona un sensore di umidità oppure lascia vuoto per usare il VMC",
+          "abs_hum_formula": "Magnus-Tetens (standard) oppure August-Roche-Magnus (WMO, più preciso 0-60°C)",
           "dew_point_enabled": "Attiva il sensore del punto di rugiada calcolato (°C)",
-          "dew_point_temperature_source": "'vmc' oppure entity_id",
-          "dew_point_humidity_source": "'vmc' oppure entity_id",
-          "dew_point_formula": "'magnus' (Magnus-Tetens) oppure 'custom' (August-Roche-Magnus, WMO)",
-          "comfort_index_enabled": "Attiva il sensore dell'indice di comfort termoigrometrico",
-          "comfort_index_temperature_source": "'vmc' oppure entity_id",
-          "comfort_index_humidity_source": "'vmc' oppure entity_id",
-          "comfort_index_formula": "'magnus' (Magnus-Tetens) oppure 'custom' (August-Roche-Magnus, WMO)",
+          "dew_point_temperature_source": "Seleziona un sensore di temperatura oppure lascia vuoto per usare il VMC",
+          "dew_point_humidity_source": "Seleziona un sensore di umidità oppure lascia vuoto per usare il VMC",
+          "dew_point_formula": "Magnus-Tetens (standard) oppure August-Roche-Magnus (WMO, più preciso 0-60°C)",
+          "comfort_index_enabled": "Attiva il sensore dell'indice di comfort termoigrometrico (0-100)",
+          "comfort_index_temperature_source": "Seleziona un sensore di temperatura oppure lascia vuoto per usare il VMC",
+          "comfort_index_humidity_source": "Seleziona un sensore di umidità oppure lascia vuoto per usare il VMC",
+          "comfort_index_formula": "Magnus-Tetens (standard) oppure August-Roche-Magnus (WMO, più preciso 0-60°C)",
           "dew_point_delta_enabled": "Attiva il sensore del delta tra punto di rugiada interno ed esterno (°C)",
-          "dew_point_delta_temperature_internal": "'vmc' oppure entity_id per la temperatura interna",
-          "dew_point_delta_temperature_external": "'vmc' oppure entity_id per la temperatura esterna",
-          "dew_point_delta_humidity_source": "'vmc' oppure entity_id per l'umidità",
-          "dew_point_delta_formula": "'magnus' (Magnus-Tetens) oppure 'custom' (August-Roche-Magnus, WMO)"
+          "dew_point_delta_temperature_internal": "Seleziona un sensore per la temperatura interna oppure lascia vuoto per usare il VMC",
+          "dew_point_delta_temperature_external": "Seleziona un sensore per la temperatura esterna oppure lascia vuoto per usare il VMC",
+          "dew_point_delta_humidity_source": "Seleziona un sensore di umidità oppure lascia vuoto per usare il VMC",
+          "dew_point_delta_formula": "Magnus-Tetens (standard) oppure August-Roche-Magnus (WMO, più preciso 0-60°C)"
         }
       }
     },

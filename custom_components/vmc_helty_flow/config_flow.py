@@ -8,6 +8,7 @@ from typing import Any
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
+from homeassistant.helpers import selector
 
 from .const import (
     CONF_EASC_ABSOLUTE_HUMIDITY,
@@ -685,6 +686,16 @@ _EASC_BASE_SENSORS = (
 )
 
 
+def _src_to_ui(value: str) -> str | None:
+    """Map EASC_SOURCE_VMC to None for EntitySelector display (empty = use VMC)."""
+    return None if value == EASC_SOURCE_VMC else value
+
+
+def _src_from_ui(value: str | None) -> str:
+    """Map None/empty EntitySelector value back to EASC_SOURCE_VMC."""
+    return value if value else EASC_SOURCE_VMC
+
+
 def _flatten_easc_config(easc_config: dict) -> dict:
     """Convert nested EASC config to a flat dict for the options form."""
     cfg = validate_easc_config(easc_config)
@@ -693,23 +704,23 @@ def _flatten_easc_config(easc_config: dict) -> dict:
     for sensor_key, prefix in _EASC_BASE_SENSORS:
         sc = sensors.get(sensor_key, {})
         flat[f"{prefix}_enabled"] = sc.get(CONF_EASC_ENABLED, False)
-        flat[f"{prefix}_temperature_source"] = sc.get(
-            CONF_EASC_TEMPERATURE_SOURCE, EASC_SOURCE_VMC
+        flat[f"{prefix}_temperature_source"] = _src_to_ui(
+            sc.get(CONF_EASC_TEMPERATURE_SOURCE, EASC_SOURCE_VMC)
         )
-        flat[f"{prefix}_humidity_source"] = sc.get(
-            CONF_EASC_HUMIDITY_SOURCE, EASC_SOURCE_VMC
+        flat[f"{prefix}_humidity_source"] = _src_to_ui(
+            sc.get(CONF_EASC_HUMIDITY_SOURCE, EASC_SOURCE_VMC)
         )
         flat[f"{prefix}_formula"] = sc.get(CONF_EASC_FORMULA, EASC_FORMULA_MAGNUS)
     dpd = sensors.get(CONF_EASC_DEW_POINT_DELTA, {})
     flat["dew_point_delta_enabled"] = dpd.get(CONF_EASC_ENABLED, False)
-    flat["dew_point_delta_temperature_internal"] = dpd.get(
-        CONF_EASC_TEMPERATURE_INTERNAL, EASC_SOURCE_VMC
+    flat["dew_point_delta_temperature_internal"] = _src_to_ui(
+        dpd.get(CONF_EASC_TEMPERATURE_INTERNAL, EASC_SOURCE_VMC)
     )
-    flat["dew_point_delta_temperature_external"] = dpd.get(
-        CONF_EASC_TEMPERATURE_EXTERNAL, EASC_SOURCE_VMC
+    flat["dew_point_delta_temperature_external"] = _src_to_ui(
+        dpd.get(CONF_EASC_TEMPERATURE_EXTERNAL, EASC_SOURCE_VMC)
     )
-    flat["dew_point_delta_humidity_source"] = dpd.get(
-        CONF_EASC_HUMIDITY_SOURCE, EASC_SOURCE_VMC
+    flat["dew_point_delta_humidity_source"] = _src_to_ui(
+        dpd.get(CONF_EASC_HUMIDITY_SOURCE, EASC_SOURCE_VMC)
     )
     flat["dew_point_delta_formula"] = dpd.get(CONF_EASC_FORMULA, EASC_FORMULA_MAGNUS)
     return flat
@@ -721,33 +732,47 @@ def _build_easc_config_from_input(flat: dict) -> dict:
         "advanced_sensors": {
             CONF_EASC_ABSOLUTE_HUMIDITY: {
                 CONF_EASC_ENABLED: flat["abs_hum_enabled"],
-                CONF_EASC_TEMPERATURE_SOURCE: flat["abs_hum_temperature_source"],
-                CONF_EASC_HUMIDITY_SOURCE: flat["abs_hum_humidity_source"],
+                CONF_EASC_TEMPERATURE_SOURCE: _src_from_ui(
+                    flat.get("abs_hum_temperature_source")
+                ),
+                CONF_EASC_HUMIDITY_SOURCE: _src_from_ui(
+                    flat.get("abs_hum_humidity_source")
+                ),
                 CONF_EASC_FORMULA: flat.get("abs_hum_formula", EASC_FORMULA_MAGNUS),
             },
             CONF_EASC_DEW_POINT: {
                 CONF_EASC_ENABLED: flat["dew_point_enabled"],
-                CONF_EASC_TEMPERATURE_SOURCE: flat["dew_point_temperature_source"],
-                CONF_EASC_HUMIDITY_SOURCE: flat["dew_point_humidity_source"],
+                CONF_EASC_TEMPERATURE_SOURCE: _src_from_ui(
+                    flat.get("dew_point_temperature_source")
+                ),
+                CONF_EASC_HUMIDITY_SOURCE: _src_from_ui(
+                    flat.get("dew_point_humidity_source")
+                ),
                 CONF_EASC_FORMULA: flat.get("dew_point_formula", EASC_FORMULA_MAGNUS),
             },
             CONF_EASC_COMFORT_INDEX: {
                 CONF_EASC_ENABLED: flat["comfort_index_enabled"],
-                CONF_EASC_TEMPERATURE_SOURCE: flat["comfort_index_temperature_source"],
-                CONF_EASC_HUMIDITY_SOURCE: flat["comfort_index_humidity_source"],
+                CONF_EASC_TEMPERATURE_SOURCE: _src_from_ui(
+                    flat.get("comfort_index_temperature_source")
+                ),
+                CONF_EASC_HUMIDITY_SOURCE: _src_from_ui(
+                    flat.get("comfort_index_humidity_source")
+                ),
                 CONF_EASC_FORMULA: flat.get(
                     "comfort_index_formula", EASC_FORMULA_MAGNUS
                 ),
             },
             CONF_EASC_DEW_POINT_DELTA: {
                 CONF_EASC_ENABLED: flat["dew_point_delta_enabled"],
-                CONF_EASC_TEMPERATURE_INTERNAL: flat[
-                    "dew_point_delta_temperature_internal"
-                ],
-                CONF_EASC_TEMPERATURE_EXTERNAL: flat[
-                    "dew_point_delta_temperature_external"
-                ],
-                CONF_EASC_HUMIDITY_SOURCE: flat["dew_point_delta_humidity_source"],
+                CONF_EASC_TEMPERATURE_INTERNAL: _src_from_ui(
+                    flat.get("dew_point_delta_temperature_internal")
+                ),
+                CONF_EASC_TEMPERATURE_EXTERNAL: _src_from_ui(
+                    flat.get("dew_point_delta_temperature_external")
+                ),
+                CONF_EASC_HUMIDITY_SOURCE: _src_from_ui(
+                    flat.get("dew_point_delta_humidity_source")
+                ),
                 CONF_EASC_FORMULA: flat.get(
                     "dew_point_delta_formula", EASC_FORMULA_MAGNUS
                 ),
@@ -851,7 +876,7 @@ class VmcHeltyOptionsFlowHandler(config_entries.OptionsFlow):
         flat_defaults = _flatten_easc_config(existing_easc)
 
         if user_input is not None:
-            # Validate all source fields
+            # Validate all source fields — None means "use VMC" (always valid)
             for field in (
                 "abs_hum_temperature_source",
                 "abs_hum_humidity_source",
@@ -863,10 +888,12 @@ class VmcHeltyOptionsFlowHandler(config_entries.OptionsFlow):
                 "dew_point_delta_temperature_external",
                 "dew_point_delta_humidity_source",
             ):
-                try:
-                    validate_source(user_input.get(field, EASC_SOURCE_VMC))
-                except Exception:
-                    errors[field] = "invalid_easc_source"
+                val = user_input.get(field)
+                if val:  # Non-empty → must be a valid entity_id
+                    try:
+                        validate_source(val)
+                    except Exception:
+                        errors[field] = "invalid_easc_source"
             # Validate all formula fields
             for field in (
                 "abs_hum_formula",
@@ -888,6 +915,18 @@ class VmcHeltyOptionsFlowHandler(config_entries.OptionsFlow):
         # Use submitted values (for re-display on error) or defaults
         current = user_input if user_input is not None else flat_defaults
 
+        # None = empty EntitySelector (user leaves blank → use VMC device)
+        _temp_sel = vol.Any(
+            None,
+            selector.EntitySelector(
+                selector.EntitySelectorConfig(domain=["sensor", "weather"])
+            ),
+        )
+        _hum_sel = vol.Any(
+            None,
+            selector.EntitySelector(selector.EntitySelectorConfig(domain=["sensor"])),
+        )
+
         schema = vol.Schema(
             {
                 # AbsoluteHumidity
@@ -897,12 +936,12 @@ class VmcHeltyOptionsFlowHandler(config_entries.OptionsFlow):
                 ): bool,
                 vol.Optional(
                     "abs_hum_temperature_source",
-                    default=current.get("abs_hum_temperature_source", EASC_SOURCE_VMC),
-                ): str,
+                    default=current.get("abs_hum_temperature_source"),
+                ): _temp_sel,
                 vol.Optional(
                     "abs_hum_humidity_source",
-                    default=current.get("abs_hum_humidity_source", EASC_SOURCE_VMC),
-                ): str,
+                    default=current.get("abs_hum_humidity_source"),
+                ): _hum_sel,
                 vol.Optional(
                     "abs_hum_formula",
                     default=current.get("abs_hum_formula", EASC_FORMULA_MAGNUS),
@@ -914,14 +953,12 @@ class VmcHeltyOptionsFlowHandler(config_entries.OptionsFlow):
                 ): bool,
                 vol.Optional(
                     "dew_point_temperature_source",
-                    default=current.get(
-                        "dew_point_temperature_source", EASC_SOURCE_VMC
-                    ),
-                ): str,
+                    default=current.get("dew_point_temperature_source"),
+                ): _temp_sel,
                 vol.Optional(
                     "dew_point_humidity_source",
-                    default=current.get("dew_point_humidity_source", EASC_SOURCE_VMC),
-                ): str,
+                    default=current.get("dew_point_humidity_source"),
+                ): _hum_sel,
                 vol.Optional(
                     "dew_point_formula",
                     default=current.get("dew_point_formula", EASC_FORMULA_MAGNUS),
@@ -933,16 +970,12 @@ class VmcHeltyOptionsFlowHandler(config_entries.OptionsFlow):
                 ): bool,
                 vol.Optional(
                     "comfort_index_temperature_source",
-                    default=current.get(
-                        "comfort_index_temperature_source", EASC_SOURCE_VMC
-                    ),
-                ): str,
+                    default=current.get("comfort_index_temperature_source"),
+                ): _temp_sel,
                 vol.Optional(
                     "comfort_index_humidity_source",
-                    default=current.get(
-                        "comfort_index_humidity_source", EASC_SOURCE_VMC
-                    ),
-                ): str,
+                    default=current.get("comfort_index_humidity_source"),
+                ): _hum_sel,
                 vol.Optional(
                     "comfort_index_formula",
                     default=current.get("comfort_index_formula", EASC_FORMULA_MAGNUS),
@@ -954,22 +987,16 @@ class VmcHeltyOptionsFlowHandler(config_entries.OptionsFlow):
                 ): bool,
                 vol.Optional(
                     "dew_point_delta_temperature_internal",
-                    default=current.get(
-                        "dew_point_delta_temperature_internal", EASC_SOURCE_VMC
-                    ),
-                ): str,
+                    default=current.get("dew_point_delta_temperature_internal"),
+                ): _temp_sel,
                 vol.Optional(
                     "dew_point_delta_temperature_external",
-                    default=current.get(
-                        "dew_point_delta_temperature_external", EASC_SOURCE_VMC
-                    ),
-                ): str,
+                    default=current.get("dew_point_delta_temperature_external"),
+                ): _temp_sel,
                 vol.Optional(
                     "dew_point_delta_humidity_source",
-                    default=current.get(
-                        "dew_point_delta_humidity_source", EASC_SOURCE_VMC
-                    ),
-                ): str,
+                    default=current.get("dew_point_delta_humidity_source"),
+                ): _hum_sel,
                 vol.Optional(
                     "dew_point_delta_formula",
                     default=current.get("dew_point_delta_formula", EASC_FORMULA_MAGNUS),

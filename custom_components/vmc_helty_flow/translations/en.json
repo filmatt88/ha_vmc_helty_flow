@@ -118,15 +118,63 @@
           "scan_interval": "Update interval (seconds)",
           "timeout": "Connection timeout (seconds)",
           "retry_attempts": "Reconnect attempts",
-          "room_volume": "Room volume (m³)"
+          "room_volume": "Room volume (m³)",
+          "configure_easc": "Configure advanced sensors (EASC)"
         },
         "data_description": {
           "scan_interval": "Data update frequency from VMC device (30-600 seconds)",
           "timeout": "TCP connection timeout to device (5-60 seconds)",
           "retry_attempts": "Number of attempts in case of communication error (1-10)",
-          "room_volume": "Room volume in cubic meters for accurate air change calculations (1-1000 m³)"
+          "room_volume": "Room volume in cubic meters for accurate air change calculations (1-1000 m³)",
+          "configure_easc": "Check to open advanced sensor configuration (absolute humidity, dew point, comfort index, dew point delta)"
+        }
+      },
+      "advanced_sensors": {
+        "title": "EASC Advanced Sensors",
+        "description": "Configure data sources for the advanced calculated sensors. Select a HA entity or leave empty to use the VMC device data.",
+        "data": {
+          "abs_hum_enabled": "Enable Absolute Humidity",
+          "abs_hum_temperature_source": "Absolute Humidity — temperature source",
+          "abs_hum_humidity_source": "Absolute Humidity — humidity source",
+          "abs_hum_formula": "Absolute Humidity — formula",
+          "dew_point_enabled": "Enable Dew Point",
+          "dew_point_temperature_source": "Dew Point — temperature source",
+          "dew_point_humidity_source": "Dew Point — humidity source",
+          "dew_point_formula": "Dew Point — formula",
+          "comfort_index_enabled": "Enable Comfort Index",
+          "comfort_index_temperature_source": "Comfort Index — temperature source",
+          "comfort_index_humidity_source": "Comfort Index — humidity source",
+          "comfort_index_formula": "Comfort Index — formula",
+          "dew_point_delta_enabled": "Enable Dew Point Delta",
+          "dew_point_delta_temperature_internal": "Dew Point Delta — internal temperature",
+          "dew_point_delta_temperature_external": "Dew Point Delta — external temperature",
+          "dew_point_delta_humidity_source": "Dew Point Delta — humidity source",
+          "dew_point_delta_formula": "Dew Point Delta — formula"
+        },
+        "data_description": {
+          "abs_hum_enabled": "Enable the calculated absolute humidity sensor (g/m³)",
+          "abs_hum_temperature_source": "Select a temperature sensor or leave empty to use the VMC device",
+          "abs_hum_humidity_source": "Select a humidity sensor or leave empty to use the VMC device",
+          "abs_hum_formula": "Magnus-Tetens (standard) or August-Roche-Magnus (WMO, more accurate 0-60°C)",
+          "dew_point_enabled": "Enable the calculated dew point sensor (°C)",
+          "dew_point_temperature_source": "Select a temperature sensor or leave empty to use the VMC device",
+          "dew_point_humidity_source": "Select a humidity sensor or leave empty to use the VMC device",
+          "dew_point_formula": "Magnus-Tetens (standard) or August-Roche-Magnus (WMO, more accurate 0-60°C)",
+          "comfort_index_enabled": "Enable the thermoigrometric comfort index sensor (0-100)",
+          "comfort_index_temperature_source": "Select a temperature sensor or leave empty to use the VMC device",
+          "comfort_index_humidity_source": "Select a humidity sensor or leave empty to use the VMC device",
+          "comfort_index_formula": "Magnus-Tetens (standard) or August-Roche-Magnus (WMO, more accurate 0-60°C)",
+          "dew_point_delta_enabled": "Enable the delta between internal and external dew point sensor (°C)",
+          "dew_point_delta_temperature_internal": "Select a sensor for internal temperature or leave empty to use the VMC device",
+          "dew_point_delta_temperature_external": "Select a sensor for external temperature or leave empty to use the VMC device",
+          "dew_point_delta_humidity_source": "Select a humidity sensor or leave empty to use the VMC device",
+          "dew_point_delta_formula": "Magnus-Tetens (standard) or August-Roche-Magnus (WMO, more accurate 0-60°C)"
         }
       }
+    },
+    "error": {
+      "invalid_easc_source": "Invalid or unavailable entity",
+      "invalid_easc_formula": "Invalid formula: select 'magnus' or 'custom'"
     }
   },
   "selector": {
