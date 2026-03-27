@@ -926,6 +926,12 @@ class VmcHeltyOptionsFlowHandler(config_entries.OptionsFlow):
             None,
             selector.EntitySelector(selector.EntitySelectorConfig(domain=["sensor"])),
         )
+        _formula_sel = selector.SelectSelector(
+            selector.SelectSelectorConfig(
+                options=list(EASC_VALID_FORMULAS),
+                translation_key="formula",
+            )
+        )
 
         schema = vol.Schema(
             {
@@ -945,7 +951,7 @@ class VmcHeltyOptionsFlowHandler(config_entries.OptionsFlow):
                 vol.Optional(
                     "abs_hum_formula",
                     default=current.get("abs_hum_formula", EASC_FORMULA_MAGNUS),
-                ): vol.In(EASC_VALID_FORMULAS),
+                ): _formula_sel,
                 # DewPoint
                 vol.Optional(
                     "dew_point_enabled",
@@ -962,7 +968,7 @@ class VmcHeltyOptionsFlowHandler(config_entries.OptionsFlow):
                 vol.Optional(
                     "dew_point_formula",
                     default=current.get("dew_point_formula", EASC_FORMULA_MAGNUS),
-                ): vol.In(EASC_VALID_FORMULAS),
+                ): _formula_sel,
                 # ComfortIndex
                 vol.Optional(
                     "comfort_index_enabled",
@@ -979,7 +985,7 @@ class VmcHeltyOptionsFlowHandler(config_entries.OptionsFlow):
                 vol.Optional(
                     "comfort_index_formula",
                     default=current.get("comfort_index_formula", EASC_FORMULA_MAGNUS),
-                ): vol.In(EASC_VALID_FORMULAS),
+                ): _formula_sel,
                 # DewPointDelta
                 vol.Optional(
                     "dew_point_delta_enabled",
@@ -1000,7 +1006,7 @@ class VmcHeltyOptionsFlowHandler(config_entries.OptionsFlow):
                 vol.Optional(
                     "dew_point_delta_formula",
                     default=current.get("dew_point_delta_formula", EASC_FORMULA_MAGNUS),
-                ): vol.In(EASC_VALID_FORMULAS),
+                ): _formula_sel,
             }
         )
 

@@ -178,6 +178,12 @@
     }
   },
   "selector": {
+    "formula": {
+      "options": {
+        "magnus": "Magnus-Tetens",
+        "custom": "August-Roche-Magnus (WMO)"
+      }
+    },
     "scan_mode": {
       "options": {
         "full": "Scansione completa",

@@ -3,7 +3,7 @@
 > **Piano di sviluppo** con task tracciabili, milestone e criteri di completamento
 > **Versione**: 1.0
 > **Data inizio**: 2026-03-23
-> **Ultima revisione**: 2026-03-27 (EASC-001→009, TEST-004→006, DOC-011→013 completati; bugfix traduzioni EASC + EntitySelector)
+> **Ultima revisione**: 2026-03-27 (EASC-001→009, TEST-004→006, DOC-011→013 completati; bugfix traduzioni EASC + EntitySelector + SelectSelector formula)
 
 ---
 

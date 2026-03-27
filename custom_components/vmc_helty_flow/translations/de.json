@@ -174,10 +174,16 @@
     },
     "error": {
       "invalid_easc_source": "Ungültige oder nicht verfügbare Entität",
-      "invalid_easc_formula": "Ungültige Formel: 'magnus' oder 'custom' auswählen"
+      "invalid_easc_formula": "Ungültige Formel: 'Magnus-Tetens' oder 'August-Roche-Magnus' auswählen"
     }
   },
   "selector": {
+    "formula": {
+      "options": {
+        "magnus": "Magnus-Tetens",
+        "custom": "August-Roche-Magnus (WMO)"
+      }
+    },
     "scan_mode": {
       "options": {
         "full": "Vollständiger Scan",

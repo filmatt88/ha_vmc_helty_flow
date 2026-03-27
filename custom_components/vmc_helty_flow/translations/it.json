@@ -174,10 +174,16 @@
     },
     "error": {
       "invalid_easc_source": "Entità non valida o non disponibile",
-      "invalid_easc_formula": "Formula non valida: seleziona 'magnus' o 'custom'"
+      "invalid_easc_formula": "Formula non valida: seleziona 'Magnus-Tetens' o 'August-Roche-Magnus'"
     }
   },
   "selector": {
+    "formula": {
+      "options": {
+        "magnus": "Magnus-Tetens",
+        "custom": "August-Roche-Magnus (WMO)"
+      }
+    },
     "scan_mode": {
       "options": {
         "full": "Scansione completa",
