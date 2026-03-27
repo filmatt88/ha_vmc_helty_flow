@@ -209,3 +209,35 @@ COMFORT_LEVEL_POOR = "Poor"
 # Room volume validation and configuration (m³)
 MIN_ROOM_VOLUME = 5.0  # Minimo per una stanza abitabile (es. bagno piccolo)
 MAX_ROOM_VOLUME = 200.0  # Massimo ragionevole per ambiente domestico
+
+# ---------------------------------------------------------------------------
+# EASC — External Advanced Sensor Configuration
+# ---------------------------------------------------------------------------
+
+# Top-level options key
+CONF_EASC_CONFIG = "easc_config"
+
+# Sensor group key
+CONF_EASC_ADVANCED_SENSORS = "advanced_sensors"
+
+# Sensor identifiers (one key per advanced sensor type)
+CONF_EASC_ABSOLUTE_HUMIDITY = "absolute_humidity"
+CONF_EASC_DEW_POINT = "dew_point"
+CONF_EASC_COMFORT_INDEX = "comfort_index"
+CONF_EASC_DEW_POINT_DELTA = "dew_point_delta"
+
+# Field keys shared across sensor configs
+CONF_EASC_ENABLED = "enabled"
+CONF_EASC_TEMPERATURE_SOURCE = "temperature_source"
+CONF_EASC_HUMIDITY_SOURCE = "humidity_source"
+CONF_EASC_TEMPERATURE_INTERNAL = "temperature_internal"
+CONF_EASC_TEMPERATURE_EXTERNAL = "temperature_external"
+CONF_EASC_FORMULA = "formula"
+
+# Special sentinel value: use the VMC built-in data (default)
+EASC_SOURCE_VMC = "vmc"
+
+# Supported formula identifiers
+EASC_FORMULA_MAGNUS = "magnus"
+EASC_FORMULA_CUSTOM = "custom"
+EASC_VALID_FORMULAS = [EASC_FORMULA_MAGNUS, EASC_FORMULA_CUSTOM]

@@ -3,7 +3,7 @@
 > **Piano di sviluppo** con task tracciabili, milestone e criteri di completamento
 > **Versione**: 1.0
 > **Data inizio**: 2026-03-23
-> **Ultima revisione**: 2026-03-26 (v1.2.0 attiva)
+> **Ultima revisione**: 2026-03-27 (EASC-001→009, TEST-004→006, DOC-011→013 completati)
 
 ---
 
@@ -22,13 +22,14 @@ Tech Debt: 1 item ⚠️ (SENS-009: monitoraggio energia reale)
 | Milestone | Stato | Data Target | Completamento |
 |-----------|-------|-------------|---------------|
 | v1.1.1 | ✅ Completed | 2026-03-26 | ▓▓▓▓▓▓▓▓▓▓ 100% |
-| v1.2.0 | 🔄 In Progress | 2026-05-15 | ░░░░░░░░░░ 0% |
+| v1.2.0 | 🔄 In Progress | 2026-05-15 | ▓▓▓▓▓▓▓▓░░ 70% |
 | v1.3.0 | 📋 Planned | 2026-08-15 | ░░░░░░░░░░ 0% |
 | v1.4.0 | 📋 Planned | 2026-11-15 | ░░░░░░░░░░ 0% |
+| v1.5.0 | 📋 Planned | 2027-02-15 | ░░░░░░░░░░ 0% |
 
 ---
 
-## 🎯 Milestone 1: v1.1.1 (Target: 2026-04-15)
+## 🎯 Milestone 1: v1.1.1 (Target: 2026-03-26)
 
 **Obiettivo**: Rilascio beta con nuovi blueprint e sensori base per feedback community
 
@@ -163,7 +164,7 @@ Tech Debt: 1 item ⚠️ (SENS-009: monitoraggio energia reale)
   - **Priority**: 🟡 Media
   - **Test**: 18/18 passed, Include efficiency metrics
 
-- [ ] **SENS-004**: Implementa `VmcHeltyRunningTimeSensor` *(spostato a Milestone 2 / Sprint 2.1)*
+- [ ] **SENS-004**: Implementa `VmcHeltyRunningTimeSensor` *(spostato a Milestone 3 / Sprint 3.1)*
 
 - [ ] **SENS-009**: Migliora `VmcHeltyDailyEnergyEstimateSensor` (v1.3.0)
   - [ ] Rimuovi pattern fisso poco realistico
@@ -178,7 +179,7 @@ Tech Debt: 1 item ⚠️ (SENS-009: monitoraggio energia reale)
   - **Dipendenze**: SENS-002 (sostituisce logica pattern)
 
 ##### 5. Binary Sensors Alerting
-- [ ] **SENS-005**: Implementa `VmcHeltyFilterWarningBinarySensor` *(spostato a Milestone 2 / Sprint 2.1)*
+- [x] **SENS-005**: Implementa `VmcHeltyFilterWarningBinarySensor` *(completato, in Milestone 2 / Sprint 2.1)*
 
 - [x] **SENS-006**: Implementa `VmcHeltyAirQualityAlertBinarySensor`
   - [x] ON quando CO2 > 1000 ppm per 5+ minuti
@@ -310,14 +311,14 @@ Tech Debt: 1 item ⚠️ (SENS-009: monitoraggio energia reale)
 
 ---
 
-## 🎯 Milestone 2: v1.4.0 Platinum Advanced (Target: 2026-11-15)
+## 🎯 Milestone 2: v1.2.0 (Target: 2026-05-15)
 
-**Obiettivo**: Architettura avanzata per sensori configurabili + sorgenti dati esterne
+**Obiettivo**: Sensori evoluti configurabili con sorgenti dati esterne (EASC — External Advanced Sensor Configuration)
 
 ### 📋 Feature Principale: External Advanced Sensor Configuration (EASC)
 
 #### Overview
-System permettere ai sensori evoluti di utilizzare fonti dati esterne (sensori HA, ESPHome, Zigbee) al posto dei sensori VMC interni, con fallback automatico a dati VMC.
+Sistema che permette ai sensori evoluti di utilizzare fonti dati esterne (sensori HA, ESPHome, Zigbee) al posto dei sensori VMC interni, con fallback automatico a dati VMC.
 
 #### Analisi Sensori Evoluti Attualmente Implementati
 
@@ -401,7 +402,7 @@ Future opportunity: VOC-based adaptive ventilation control
 
 ```yaml
 # config_entry.options schema
-esac_config:
+easc_config:
   advanced_sensors:
     absolute_humidity:
       enabled: true
@@ -423,141 +424,99 @@ esac_config:
       humidity_source: "sensor.living_room_humidity"
 ```
 
-#### Implementation Plan - Sprint 2.1 (2 settimane)
-
-##### 4.1.1 Infrastructure
-- [ ] **EASC-001**: Config schema validation
-  - [ ] Aggiungi config schema per EASC options
-  - [ ] Validate entity_id references
-  - [ ] Validation formulas custom
-  - **Effort**: 3h
-  - **Priority**: 🔴 Alta
-
-- [ ] **EASC-002**: Data source provider
-  - [ ] Crea `EASCDataProvider` class
-  - [ ] Method `get_temperature(source)` → float
-  - [ ] Method `get_humidity(source)` → float
-  - [ ] Method `get_entity_state(entity_id)` with fallback
-  - [ ] Unit conversion utilities
-  - **Effort**: 4h
-  - **Priority**: 🔴 Alta
-
-- [ ] **EASC-003**: Config flow UI
-  - [ ] Step "advanced_sensor_config"
-  - [ ] Dropdown per ogni sensore (enabled/disabled)
-  - [ ] Entity picker per temperature_source, humidity_source, etc.
-  - [ ] Form validation e error handling
-  - **Effort**: 5h
-  - **Priority**: 🔴 Alta
-
-##### 4.1.2 Sensor Refactoring
-- [ ] **EASC-004**: Refactor VmcHeltyAbsoluteHumiditySensor
-  - [ ] Inject EASCDataProvider
-  - [ ] Get temp/humidity da provider instead hardcoded VMC
-  - [ ] Update unit tests
-  - **Effort**: 2h
-  - **Priority**: 🔴 Alta
-
-- [ ] **EASC-005**: Refactor VmcHeltyDewPointSensor
-  - [ ] Inject EASCDataProvider
-  - [ ] Support external temp/humidity sources
-  - [ ] Update unit tests
-  - **Effort**: 2h
-  - **Priority**: 🔴 Alta
-
-- [ ] **EASC-006**: Refactor VmcHeltyComfortIndexSensor
-  - [ ] Inject EASCDataProvider
-  - [ ] Support external temp/humidity sources
-  - [ ] Update unit tests
-  - **Effort**: 2h
-  - **Priority**: 🔴 Alta
-
-- [ ] **EASC-007**: Refactor VmcHeltyDewPointDeltaSensor
-  - [ ] Support external temp_int, temp_ext, humidity sources
-  - [ ] Weather entity support per temperatura esterna
-  - [ ] Update unit tests
-  - **Effort**: 2h
-  - **Priority**: 🔴 Alta
-
-##### 4.1.3 Testing & Documentation
-- [ ] **TEST-004**: Unit tests EASC provider
-  - [ ] Test temperature conversions (°C vs °F)
-  - [ ] Test humidity conversions (0-1 vs 0-100)
-  - [ ] Test fallback to VMC data
-  - [ ] Test invalid entity_id handling
-  - **Effort**: 3h
-  - **Priority**: 🔴 Alta
-
-- [ ] **TEST-005**: Integration tests sensors refactored
-  - [ ] Test ogni sensore con 3 source scenarios (VMC, external, mixed)
-  - [ ] Test fallback automatico
-  - [ ] Test error conditions
-  - **Effort**: 4h
-  - **Priority**: 🔴 Alta
-
-- [ ] **DOC-012**: Documentation EASC
-  - [ ] Crea `docs/EXTERNAL_ADVANCED_SENSORS.md`
-  - [ ] Guida configurazione step-by-step
-  - [ ] Esempi: integrazione Netatmo, ESPHome, weather
-  - [ ] Troubleshooting
-  - **Effort**: 3h
-  - **Priority**: 🟡 Media
-
-**Sprint 2.1 Total Effort**: ~31 ore
-
-#### Implementation Plan - Sprint 2.2 (1 settimana)
-
-- [ ] **EASC-008**: Diagnostics logging
-- [ ] **EASC-009**: Custom formula support
-- [ ] **TEST-006**: Full integration testing
-- [ ] **REL-014**: Release v1.4.0-beta
-- [ ] **DOC-013**: Update main README
-
-**Sprint 2.2 Total Effort**: ~15 ore
-
 ---
 
-
-## 🎯 Milestone 3: v1.2.0 Stable (Target: 2026-05-15)
-
-**Obiettivo**: Release stabile dopo feedback beta, dashboard package, restanti blueprint
-
-### Sprint 3.1: Beta Feedback & Fixes (1 settimana)
-**Start**: 2026-03-27
-**End**: 2026-04-02
+### Sprint 2.1: EASC Infrastructure & Sensor Refactoring (2 settimane)
+**Owner**: Development Team
+**Start**: 2026-04-03
+**End**: 2026-04-16
 
 #### Task Checklist
 
-- [ ] **FEED-001**: Raccolta feedback community
-  - [ ] Post su GitHub Discussions
-  - [ ] Post su Home Assistant Community Forum
-  - [ ] Monitor GitHub Issues
-  - [ ] Traccia bug reports
-  - **Effort**: 5h (distribuito su settimana)
+##### Infrastructure
+- [x] **EASC-001**: Config schema validation
+  - [x] Aggiungi config schema per EASC options (`easc_schema.py`)
+  - [x] Validate entity_id references (`validate_source`)
+  - [x] Validation formulas custom (`validate_formula`)
+  - **Effort**: 3h ✅ **COMPLETATO 2026-03-27**
   - **Priority**: 🔴 Alta
 
-- [ ] **FEED-002**: Fix bug da beta testing
-  - [ ] Prioritize bugs critici
-  - [ ] Fix e test localmente
-  - [ ] Deploy fix incrementali
-  - **Effort**: 8h
+- [x] **EASC-002**: Data source provider
+  - [x] Crea `EASCDataProvider` class (`easc_provider.py`)
+  - [x] Method `get_temperature(source)` → float
+  - [x] Method `get_humidity(source)` → float
+  - [x] Method `get_entity_state(entity_id)` with fallback
+  - [x] Unit conversion utilities (`celsius_from_unit`, `humidity_to_percent`)
+  - **Effort**: 4h ✅ **COMPLETATO 2026-03-27**
   - **Priority**: 🔴 Alta
 
-- [ ] **FEED-003**: Improvement da feedback
-  - [ ] Raccogli suggerimenti utenti
-  - [ ] Valuta fattibilità
-  - [ ] Implementa miglioramenti quick
-  - **Effort**: 6h
+- [x] **EASC-003**: Options flow UI (step EASC in VmcHeltyOptionsFlowHandler)
+  - [x] Nuovo step `advanced_sensors` nell'options flow esistente
+  - [x] Toggle enabled/disabled per ogni sensore avanzato
+  - [x] Campi sorgente per temperature_source, humidity_source, ecc.
+  - [x] Form validation e error handling (`validate_source` per-campo)
+  - [x] Helpers `_flatten_easc_config` / `_build_easc_config_from_input`
+  - [x] Labels `strings.json` aggiornate (IT)
+  - **Effort**: 5h ✅ **COMPLETATO 2026-03-27**
+  - **Priority**: 🔴 Alta
+
+##### Sensor Refactoring
+- [x] **EASC-004**: Refactor VmcHeltyAbsoluteHumiditySensor
+  - [x] Inject EASCDataProvider (lazy, via `self.hass`)
+  - [x] Get temp/humidity da provider con sorgenti configurabili
+  - [x] Update unit tests (`config_entry.options = {}`)
+  - **Effort**: 2h ✅ **COMPLETATO 2026-03-27**
+  - **Priority**: 🔴 Alta
+
+- [x] **EASC-005**: Refactor VmcHeltyDewPointSensor
+  - [x] Inject EASCDataProvider
+  - [x] Support external temp/humidity sources
+  - [x] Update unit tests
+  - **Effort**: 2h ✅ **COMPLETATO 2026-03-27**
+  - **Priority**: 🔴 Alta
+
+- [x] **EASC-006**: Refactor VmcHeltyComfortIndexSensor
+  - [x] Inject EASCDataProvider
+  - [x] Support external temp/humidity sources
+  - [x] Update unit tests
+  - **Effort**: 2h ✅ **COMPLETATO 2026-03-27**
+  - **Priority**: 🔴 Alta
+
+- [x] **EASC-007**: Refactor VmcHeltyDewPointDeltaSensor
+  - [x] Support external temp_int, temp_ext, humidity sources
+  - [x] Weather entity support via `get_temperature_external()`
+  - [x] Update unit tests
+  - **Effort**: 2h ✅ **COMPLETATO 2026-03-27**
+  - **Priority**: 🔴 Alta
+
+##### Testing & Documentation
+- [x] **TEST-004**: Unit tests EASC provider
+  - [x] Test temperature conversions (°C vs °F) — `TestCelsiusFromUnit` (7 test)
+  - [x] Test humidity conversions (0-1 vs 0-100) — `TestHumidityToPercent` (6 test)
+  - [x] Test fallback to VMC data — `TestGetTemperatureEntity`, `TestGetHumidityEntity`
+  - [x] Test invalid entity_id handling — `TestGetEntityState`, `TestMixedScenarios`
+  - [x] Test `magnus_coefficients` (Magnus-Tetens vs August-Roche-Magnus) — `TestMagnusCoefficients` (5 test)
+  - **Effort**: 3h ✅ **COMPLETATO 2026-03-27**
+  - **Priority**: 🔴 Alta
+
+- [x] **TEST-005**: Integration tests sensors refactored
+  - [x] Test ogni sensore con 3 source scenarios (VMC, external, mixed) — `test_easc_integration_sensors.py`
+  - [x] Test fallback automatico (entity unavailable/unknown → VMC)
+  - [x] Test error conditions (None data, zero humidity, invalid VMGI)
+  - [x] Test formula attribute in `extra_state_attributes` per tutti e 4 i sensori
+  - **Effort**: 4h ✅ **COMPLETATO 2026-03-27**
+  - **Priority**: 🔴 Alta
+
+- [x] **DOC-012**: Documentation EASC
+  - [x] Crea `docs/EXTERNAL_ADVANCED_SENSORS.md`
+  - [x] Guida configurazione step-by-step (form EASC, campi source, formula)
+  - [x] Esempi: integrazione Netatmo, ESPHome, weather entity
+  - [x] Sezione fallback automatico con esempio log WARNING
+  - [x] Troubleshooting: valori inattesi, fallback inatteso, debug logging, errori validazione
+  - **Effort**: 3h ✅ **COMPLETATO 2026-03-27**
   - **Priority**: 🟡 Media
 
-- [ ] **SENS-004**: Implementa `VmcHeltyRunningTimeSensor`
-  - [ ] Tempo totale funzionamento (hours)
-  - [ ] Device class: duration
-  - [ ] Persistent tra restart
-  - [ ] **Criteri successo**: Accumula correttamente ore funzionamento
-  - **Effort**: 2h
-  - **Priority**: 🟢 Bassa
-
+##### Binary Sensors
 - [x] **SENS-005**: Implementa `VmcHeltyFilterWarningBinarySensor`
   - [x] Crea classe in `sensor.py`
   - [x] ON quando filter_hours > 90% massimo (~15970h su 17744h)
@@ -567,17 +526,128 @@ esac_config:
   - **Effort**: 1h ✅ **COMPLETATO 2026-03-26**
   - **Priority**: 🔴 Alta
 
-**Sprint 2.1 Total Effort**: ~22 ore
+**Sprint 2.1 Total Effort**: ~31h
+
+---
+
+### Sprint 2.2: EASC Advanced & Release (1 settimana)
+**Owner**: Development Team
+**Start**: 2026-04-17
+**End**: 2026-05-01
+
+#### Task Checklist
+
+- [x] **EASC-008**: Diagnostics logging
+  - [x] DEBUG log per ogni lettura (source + valore) in `EASCDataProvider`
+  - [x] WARNING + DEBUG fallback quando fonte esterna non disponibile
+  - [x] Sezione `easc` in `diagnostics.py`: configurazione + disponibilità entità + `last_updated`
+  - **Effort**: 2h ✅ **COMPLETATO 2026-03-27**
+  - **Priority**: 🟡 Media
+
+- [x] **EASC-009**: Custom formula support
+  - [x] Supporto formula custom per sensori evoluti (AbsoluteHumidity, DewPoint, ComfortIndex, DewPointDelta)
+  - [x] `magnus_coefficients(formula)` in `easc_provider.py` + integrazione in tutti i `native_value`
+  - [x] Formula field in `_flatten_easc_config` / `_build_easc_config_from_input` e schema options flow
+  - [x] `validate_formula` nel form + errore `invalid_easc_formula` in `strings.json`
+  - [x] Test formula custom scenarios in `test_easc_options_flow.py`
+  - **Effort**: 3h ✅ **COMPLETATO 2026-03-27**
+  - **Priority**: 🟡 Media
+
+- [x] **TEST-006**: Full integration testing EASC
+  - [x] Test tutti i sensori con EASC abilitato (pipeline options→sensori) — `test_easc_full_flow.py`
+  - [x] Test config flow completo — round-trip flatten/build con tutti i 17 campi (incl. formula)
+  - [x] Test regression sensors esistenti — `VmcHeltySensor` non risente di EASC options
+  - [x] Test `is_sensor_enabled` per tutti i 4 sensori
+  - [x] Test multi-sensore simultaneo + indipendenza delle sorgenti
+  - **Effort**: 4h ✅ **COMPLETATO 2026-03-27**
+  - **Priority**: 🔴 Alta
+
+- [ ] **REL-014**: Tag beta v1.2.0-beta
+  - [ ] Commit e push
+  - [ ] `git tag v1.2.0-beta`
+  - [ ] Push tag a remotes
+  - **Effort**: 15min
+  - **Priority**: 🟡 Media
+
+- [x] **DOC-013**: Aggiorna README principale
+  - [x] Sezione EASC con link a `docs/EXTERNAL_ADVANCED_SENSORS.md`
+  - [x] Lista sensori aggiornata con tag `(EASC-enabled)` + link documentazione
+  - [x] Sezione "External Advanced Sensor Configuration (EASC)" con quick setup + esempio Netatmo
+  - [x] Sezione "Upcoming Features" aggiornata con EASC e Filter Warning come già shippati
+  - **Effort**: 2h ✅ **COMPLETATO 2026-03-27**
+  - **Priority**: 🟡 Media
+
+- [x] **DOC-011**: Aggiorna `CHANGELOG.md` v1.2.0
+  - [x] Sezione `[Unreleased] — v1.2.0` con tutte le novità EASC
+  - [x] EASCDataProvider, magnus_coefficients, options flow, diagnostics, sensori, test, docs
+  - [x] Nessun breaking change (EASC è opt-in, default = `vmc`)
+  - [x] Link a `docs/EXTERNAL_ADVANCED_SENSORS.md`
+  - **Effort**: 1h ✅ **COMPLETATO 2026-03-27**
+  - **Priority**: 🔴 Alta
+
+- [ ] **REL-005**: Merge feature branch
+  - [ ] Merge `feature/v1.2.0` → `main`
+  - [ ] Resolve conflicts (se presenti)
+  - [ ] Verify CI/CD passa
+  - **Effort**: 1h
+  - **Priority**: 🔴 Alta
+
+- [ ] **REL-006**: Tag release v1.2.0
+  - [ ] `git tag -a v1.2.0 -m "Release v1.2.0"`
+  - [ ] Push tag a tutti remotes
+  - **Effort**: 15min
+  - **Priority**: 🔴 Alta
+
+- [ ] **REL-007**: GitHub Release publication
+  - [ ] Create release from tag
+  - [ ] Copy release notes da CHANGELOG
+  - [ ] Mark as "Latest release"
+  - [ ] Publish
+  - **Effort**: 30min
+  - **Priority**: 🔴 Alta
+
+- [ ] **REL-008**: HACS update
+  - [ ] Verify HACS fetches new version
+  - [ ] Update integration description
+  - **Effort**: 30min
+  - **Priority**: 🔴 Alta
+
+**Sprint 2.2 Total Effort**: ~14h
+**Deliverable**: v1.2.0 con EASC pubblicamente disponibile
+
+---
+
+
+## 🎯 Milestone 3: v1.3.0 (Target: 2026-08-15)
+
+**Obiettivo**: Nuovi sensori di monitoraggio e blueprint aggiuntivi di automazione
+
+### Sprint 3.1: Nuovi Sensori (2 giorni)
+**Owner**: Development Team
+**Start**: 2026-05-19
+**End**: 2026-05-20
+
+#### Task Checklist
+
+- [ ] **SENS-004**: Implementa `VmcHeltyRunningTimeSensor`
+  - [ ] Tempo totale funzionamento (hours)
+  - [ ] Device class: duration
+  - [ ] Persistent tra restart
+  - [ ] **Criteri successo**: Accumula correttamente ore funzionamento
+  - **Effort**: 2h
+  - **Priority**: 🟢 Bassa
+
+**Sprint 3.1 Total Effort**: ~3h
 
 ---
 
 ### Sprint 3.2: Blueprint Aggiuntivi (1 settimana)
-**Start**: 2026-04-03
-**End**: 2026-04-09
+**Owner**: Development Team
+**Start**: 2026-05-22
+**End**: 2026-05-28
 
 #### Task Checklist
 
-##### 10. Nuovi Blueprint
 - [ ] **BLU-005**: Crea `vmc_temperature_compensation.yaml`
   - [ ] Logic: riduce ventilazione se temp esterna estrema
   - [ ] Input: outdoor/indoor temp sensors
@@ -617,18 +687,67 @@ esac_config:
   - **Effort**: 3h
   - **Priority**: 🟡 Media
 
-**Sprint 2.2 Total Effort**: ~17 ore
+**Sprint 3.2 Total Effort**: ~17h
 **Deliverable**: 3 blueprint aggiuntivi (totale 6)
 
 ---
 
-### Sprint 3.3: Dashboard Package (1 settimana)
-**Start**: 2026-04-10
-**End**: 2026-04-16
+### Sprint 3.3: Release v1.3.0 (3 giorni)
+**Owner**: Development Team
+**Start**: 2026-05-29
+**End**: 2026-05-31
 
 #### Task Checklist
 
-##### 11. Package Completo
+- [ ] **DOC-011**: Aggiorna `CHANGELOG.md` v1.3.0
+  - [ ] Sezione `[1.3.0]` con nuovi sensori e blueprint
+  - [ ] Breaking changes (se presenti)
+  - **Effort**: 1h
+  - **Priority**: 🔴 Alta
+
+- [ ] **REL-009**: Merge feature branch
+  - [ ] Merge `feature/v1.3.0` → `main`
+  - [ ] Verify CI/CD passa
+  - **Effort**: 30min
+  - **Priority**: 🔴 Alta
+
+- [ ] **REL-010**: Tag release v1.3.0
+  - [ ] `git tag -a v1.3.0 -m "Release v1.3.0"`
+  - [ ] Push tag a tutti remotes
+  - **Effort**: 15min
+  - **Priority**: 🔴 Alta
+
+- [ ] **REL-011**: GitHub Release publication
+  - [ ] Create release from tag
+  - [ ] Copy release notes da CHANGELOG
+  - [ ] Mark as "Latest release"
+  - [ ] Publish
+  - **Effort**: 30min
+  - **Priority**: 🔴 Alta
+
+- [ ] **REL-012**: HACS update
+  - [ ] Verify HACS fetches new version
+  - [ ] Update integration description
+  - **Effort**: 30min
+  - **Priority**: 🔴 Alta
+
+**Sprint 3.3 Total Effort**: ~3h
+**Deliverable**: v1.3.0 pubblicamente disponibile
+
+---
+
+## 🎯 Milestone 4: v1.4.0 (Target: 2026-11-15)
+
+**Obiettivo**: Dashboard package completo e polish finale per release stabile
+
+### Sprint 4.1: Package & Dashboard (1 settimana)
+**Owner**: Development Team
+**Start**: 2026-08-17
+**End**: 2026-08-23
+
+#### Task Checklist
+
+##### Package Completo
 - [ ] **PKG-001**: Crea `packages/vmc_helty_dashboard.yaml`
   - [ ] Sezione input_boolean helpers
   - [ ] Sezione input_number helpers
@@ -654,7 +773,7 @@ esac_config:
   - **Effort**: 4h
   - **Priority**: 🟡 Media
 
-##### 12. Dashboard Views
+##### Dashboard Views
 - [ ] **DASH-001**: Crea `dashboards/vmc_helty.yaml`
   - [ ] View 1: Controllo (card + quick controls)
   - [ ] View 2: Monitoraggio (grafici e gauge)
@@ -670,7 +789,7 @@ esac_config:
   - **Effort**: 1h
   - **Priority**: 🟢 Bassa
 
-##### 13. Documentation Package
+##### Documentation Package
 - [ ] **DOC-007**: Guida installazione package
   - [ ] `docs/PACKAGE_SETUP.md`
   - [ ] Step-by-step install
@@ -679,25 +798,18 @@ esac_config:
   - **Effort**: 3h
   - **Priority**: 🟡 Media
 
-- [ ] **DOC-008**: Video tutorial (opzionale)
-  - [ ] Recording setup package
-  - [ ] Upload su YouTube
-  - [ ] Embed in docs
-  - **Effort**: 4h
-  - **Priority**: 🟢 Bassa (opzionale)
-
-**Sprint 2.3 Total Effort**: ~20 ore (24h con video)
+**Sprint 4.1 Total Effort**: ~20h
 **Deliverable**: Package completo importabile + dashboard pronte
 
 ---
 
-### Sprint 3.4: Final Polish & Release (4 giorni)
-**Start**: 2026-04-17
-**End**: 2026-05-01
+### Sprint 4.2: Final Polish & Release (4 giorni)
+**Owner**: Development Team
+**Start**: 2026-08-24
+**End**: 2026-08-27
 
 #### Task Checklist
 
-##### 14. Quality Assurance Finale
 - [ ] **QA-006**: Full integration testing
   - [ ] Test package import
   - [ ] Test tutti blueprint insieme
@@ -720,7 +832,6 @@ esac_config:
   - **Effort**: 2h
   - **Priority**: 🟢 Bassa
 
-##### 15. Documentation Finale
 - [ ] **DOC-009**: Review completa documentazione
   - [ ] Proof-reading README principale
   - [ ] Check tutti i link funzionanti
@@ -728,91 +839,68 @@ esac_config:
   - **Effort**: 3h
   - **Priority**: 🟡 Media
 
-- [ ] **DOC-010**: Release notes v1.2.0
-  - [ ] File `RELEASE_NOTES_v1.2.0.md`
+- [ ] **DOC-010**: Release notes v1.4.0
+  - [ ] File `RELEASE_NOTES_v1.4.0.md`
   - [ ] Highlights principali
   - [ ] Breaking changes
-  - [ ] Migration guide da v1.1.0
+  - [ ] Migration guide da v1.3.0
   - [ ] Credits contributors
   - **Effort**: 2h
   - **Priority**: 🔴 Alta
 
-- [ ] **DOC-011**: Aggiorna CHANGELOG.md finale
-  - [ ] Cambia `[1.1.1]` → `[1.2.0]`
+- [ ] **DOC-011**: Aggiorna `CHANGELOG.md` v1.4.0
+  - [ ] Sezione `[1.4.0]` completa
   - [ ] Data release corretta
   - [ ] Link a commits/PRs
   - **Effort**: 30min
   - **Priority**: 🔴 Alta
 
-##### 16. Release v1.2.0
-- [ ] **REL-005**: Merge feature branch
-  - [ ] Merge `feature/v1.2.0` → `main`
+- [ ] **REL-013**: Merge feature branch
+  - [ ] Merge `feature/v1.4.0` → `main`
   - [ ] Resolve conflicts (se presenti)
   - [ ] Verify CI/CD passa
   - **Effort**: 1h
   - **Priority**: 🔴 Alta
 
-- [ ] **REL-006**: Tag release v1.2.0
-  - [ ] `git tag -a v1.2.0 -m "Release v1.2.0"`
+- [ ] **REL-015**: Tag release v1.4.0
+  - [ ] `git tag -a v1.4.0 -m "Release v1.4.0"`
   - [ ] Push tag a tutti remotes
-  - [ ] Verify tag presente su GitHub
   - **Effort**: 15min
   - **Priority**: 🔴 Alta
 
-- [ ] **REL-007**: GitHub Release publication
+- [ ] **REL-016**: GitHub Release publication
   - [ ] Create release from tag
-  - [ ] Copy release notes
-  - [ ] Attach assets (se necessario)
+  - [ ] Copy release notes da CHANGELOG
   - [ ] Mark as "Latest release"
   - [ ] Publish
   - **Effort**: 30min
   - **Priority**: 🔴 Alta
 
-- [ ] **REL-008**: HACS update
+- [ ] **REL-017**: HACS update
   - [ ] Verify HACS fetches new version
   - [ ] Update integration description
   - [ ] Update screenshots
   - **Effort**: 1h
   - **Priority**: 🔴 Alta
 
-##### 17. Marketing & Communication
-- [ ] **COMM-001**: Annuncio Home Assistant Community
-  - [ ] Post su forum con highlights
-  - [ ] Screenshot e demo
-  - [ ] Link download
-  - **Effort**: 1h
-  - **Priority**: 🟡 Media
-
-- [ ] **COMM-002**: Social media
-  - [ ] Post su Reddit r/homeassistant
-  - [ ] Twitter/X announcement
-  - [ ] LinkedIn (opzionale)
-  - **Effort**: 1h
-  - **Priority**: 🟢 Bassa
-
-- [ ] **COMM-003**: Contributors recognition
-  - [ ] Update README contributors section
-  - [ ] Thank you message nel release
-  - [ ] GitHub Discussions announcement
-  - **Effort**: 30min
-  - **Priority**: 🟡 Media
-
-**Sprint 2.4 Total Effort**: ~18 ore
-**Deliverable**: v1.2.0 pubblicamente disponibile
+**Sprint 4.2 Total Effort**: ~17h
+**Deliverable**: v1.4.0 pubblicamente disponibile
 
 ---
 
-## 🎯 Milestone 4: v1.3.0 Gold Quality (Target: 2026-08-15)
 
-**Obiettivo**: Upgrade Quality Scale da Silver a Gold + Energy Dashboard
+## 🎯 Milestone 5: v1.5.0 (Target: 2027-02-15)
 
-### Sprint 4.1: Quality Scale Gold Upgrade (2 settimane)
-**Start**: 2026-06-01
-**End**: 2026-06-14
+**Obiettivo**: Quality Scale Gold + Energy Dashboard + Scene e Script predefiniti
+
+### Sprint 5.1: Quality Scale Gold Upgrade (2 settimane)
+**Owner**: Development Team
+**Start**: 2026-11-16
+**End**: 2026-11-29
 
 #### Task Checklist
 
-##### 18. Icon Translations
+##### Icon Translations
 - [ ] **GOLD-001**: Implementa icon translations in `strings.json`
   - [ ] State-based icons per sensors
   - [ ] Range-based icons (filter, battery-like)
@@ -820,7 +908,7 @@ esac_config:
   - **Effort**: 4h
   - **Priority**: 🔴 Alta
 
-##### 19. Exception Translations
+##### Exception Translations
 - [ ] **GOLD-002**: Translate all exceptions
   - [ ] Convert ServiceValidationError a translated
   - [ ] Convert HomeAssistantError a translated
@@ -829,7 +917,7 @@ esac_config:
   - **Effort**: 3h
   - **Priority**: 🔴 Alta
 
-##### 20. Entity Translations Complete
+##### Entity Translations Complete
 - [ ] **GOLD-003**: Complete entity translations
   - [ ] All entity names
   - [ ] All state attributes
@@ -838,7 +926,7 @@ esac_config:
   - **Effort**: 4h
   - **Priority**: 🔴 Alta
 
-##### 21. Documentation Review
+##### Documentation Review
 - [ ] **GOLD-004**: Review per Gold standard
   - [ ] Check all docstrings present
   - [ ] Type hints complete
@@ -846,17 +934,18 @@ esac_config:
   - **Effort**: 3h
   - **Priority**: 🟡 Media
 
-**Sprint 3.1 Total Effort**: ~14 ore
+**Sprint 5.1 Total Effort**: ~14h
 
 ---
 
-### Sprint 4.2: Energy Dashboard Integration (1 settimana)
-**Start**: 2026-06-15
-**End**: 2026-06-21
+### Sprint 5.2: Energy Dashboard Integration (1 settimana)
+**Owner**: Development Team
+**Start**: 2026-11-30
+**End**: 2026-12-06
 
 #### Task Checklist
 
-##### 22. Energy Platform
+##### Energy Platform
 - [ ] **ENERGY-001**: Registra sensori con Energy platform
   - [ ] Config energy manager
   - [ ] Register power sensor
@@ -879,7 +968,7 @@ esac_config:
   - **Effort**: 2h
   - **Priority**: 🟡 Media
 
-##### 23. Testing Energy
+##### Testing Energy
 - [ ] **TEST-003**: Test energy tracking accuracy
   - [ ] Compare with real consumption (se possibile)
   - [ ] Verify accumulation correct
@@ -887,17 +976,18 @@ esac_config:
   - **Effort**: 3h
   - **Priority**: 🔴 Alta
 
-**Sprint 3.2 Total Effort**: ~12 ore
+**Sprint 5.2 Total Effort**: ~12h
 
 ---
 
-### Sprint 4.3: Scene e Script (3 giorni)
-**Start**: 2026-06-22
-**End**: 2026-06-24
+### Sprint 5.3: Scene e Script (3 giorni)
+**Owner**: Development Team
+**Start**: 2026-12-07
+**End**: 2026-12-09
 
 #### Task Checklist
 
-##### 24. Scene Predefinite
+##### Scene Predefinite
 - [ ] **SCENE-001**: Crea `examples/scenes.yaml`
   - [ ] Scene "Modalità Notte"
   - [ ] Scene "Boost Rapido"
@@ -906,7 +996,7 @@ esac_config:
   - **Effort**: 2h
   - **Priority**: 🟡 Media
 
-##### 25. Script Predefiniti
+##### Script Predefiniti
 - [ ] **SCRIPT-001**: Crea `examples/scripts.yaml`
   - [ ] Script "VMC Boost Temporizzato"
   - [ ] Script "VMC Filter Check"
@@ -921,23 +1011,53 @@ esac_config:
   - **Effort**: 2h
   - **Priority**: 🟢 Bassa
 
-**Sprint 3.3 Total Effort**: ~7 ore
+**Sprint 5.3 Total Effort**: ~7h
 
 ---
 
-### Sprint 4.4: Release v1.3.0 (3 giorni)
-**Start**: 2026-06-25
-**End**: 2026-06-27
+### Sprint 5.4: Release v1.5.0 (3 giorni)
+**Owner**: Development Team
+**Start**: 2026-12-10
+**End**: 2026-12-12
 
 #### Task Checklist
 
-- [ ] **REL-009**: Testing completo v1.3.0
-- [ ] **REL-010**: Update documentation
-- [ ] **REL-011**: Merge e tag v1.3.0
-- [ ] **REL-012**: GitHub Release
-- [ ] **REL-013**: Submit Gold quality scale verification
+- [ ] **DOC-011**: Aggiorna `CHANGELOG.md` v1.5.0
+  - [ ] Sezione `[1.5.0]` completa
+  - [ ] Data release corretta
+  - **Effort**: 1h
+  - **Priority**: 🔴 Alta
 
-**Sprint 3.4 Total Effort**: ~15 ore
+- [ ] **REL-018**: Merge feature branch
+  - [ ] Merge `feature/v1.5.0` → `main`
+  - [ ] Verify CI/CD passa
+  - **Effort**: 1h
+  - **Priority**: 🔴 Alta
+
+- [ ] **REL-019**: Tag release v1.5.0
+  - [ ] `git tag -a v1.5.0 -m "Release v1.5.0"`
+  - [ ] Push tag a tutti remotes
+  - **Effort**: 15min
+  - **Priority**: 🔴 Alta
+
+- [ ] **REL-020**: GitHub Release publication
+  - [ ] Create release from tag
+  - [ ] Copy release notes da CHANGELOG
+  - [ ] Submit Gold quality scale verification
+  - [ ] Mark as "Latest release"
+  - [ ] Publish
+  - **Effort**: 1h
+  - **Priority**: 🔴 Alta
+
+- [ ] **REL-021**: HACS update
+  - [ ] Verify HACS fetches new version
+  - [ ] Update integration description
+  - [ ] Update screenshots
+  - **Effort**: 1h
+  - **Priority**: 🔴 Alta
+
+**Sprint 5.4 Total Effort**: ~4h
+**Deliverable**: v1.5.0 Gold Quality pubblicamente disponibile
 
 ---
 
@@ -952,7 +1072,6 @@ esac_config:
 - [ ] Machine Learning predictions
 - [ ] Weather integration advanced
 - [ ] Calendar-based scheduling
-- [ ] **External Advanced Sensor Configuration (v1.4.0)** - USE VEDI MILESTONE 2
 
 ### Technical Debt
 - [ ] Rimuovi tutti `_LOGGER.setLevel(logging.DEBUG)`
@@ -1019,15 +1138,15 @@ esac_config:
 ## 📅 Timeline Overview
 
 ```
-2026-03  ║████░░░░░░░░░░░░░░░░░░░░░░║ Sprint 1.1-1.3
-2026-04  ║░░░░████████████░░░░░░░░░░║ Sprint 3.1-3.2
-2026-05  ║░░░░░░░░░░░░░░░░████████░░║ Sprint 3.3-3.4
-2026-06  ║░░░░░░░░░░░░░░░░░░░░░░████║ Sprint 4.1-4.2
-2026-07  ║██░░░░░░░░░░░░░░░░░░░░░░░░║ Sprint 4.3-4.4
-2026-08  ║░░██░░░░░░░░░░░░░░░░░░░░░░║ v1.3.0 Release
-2026-09  ║░░░░████░░░░░░░░░░░░░░░░░░║ Sprint 2.1 (EASC dev)
-2026-10  ║░░░░░░░░████████████░░░░░░║ Sprint 2.2 (EASC testing)
-2026-11  ║░░░░░░░░░░░░░░░░░░░░████░░║ v1.4.0 Release (Platinum ready)
+2026-03  ║████░░░░░░░░░░░░░░░░░░░░░░║ Sprint 1.1-1.3 → v1.1.1 ✅
+2026-04  ║░░░░████████████░░░░░░░░░░║ Sprint 2.1 (EASC infra + refactoring)
+2026-05  ║░░░░░░░░░░░░░░░░████████░░║ Sprint 2.2 (EASC advanced + release v1.2.0)
+2026-05  ║░░░░░░░░░░░░░░░░░░░░░░████║ Sprint 3.1-3.2 (Sensori + Blueprint)
+2026-05  ║░░░░░░░░░░░░░░░░░░░░░░░░██║ Sprint 3.3 → v1.3.0
+2026-08  ║░░████████████░░░░░░░░░░░░║ Sprint 4.1-4.2 (Package + Dashboard)
+2026-08  ║░░░░░░░░░░░░░░██░░░░░░░░░░║ Sprint 4.2 → v1.4.0
+2026-11  ║░░░░░░░░░░░░░░░░████████░░║ Sprint 5.1-5.3 (Gold + Energy + Scene)
+2026-12  ║░░░░░░░░░░░░░░░░░░░░░░████║ Sprint 5.4 → v1.5.0
 
 Legend: ████ = Active Development
         ░░░░ = Planning/Buffer
@@ -1046,19 +1165,32 @@ Legend: ████ = Active Development
 - ✅ GitHub release pubblicata con "pre-release" flag
 
 ### v1.2.0
-- ✅ Tutti criteri v1.1.1
-- ✅ 6 blueprint totali disponibili
-- ✅ Package dashboard completo
-- ✅ Feedback beta integrati
+- ✅ Tutti i sensori evoluti supportano sorgenti dati esterne (EASC)
+- ✅ Config flow UI per configurazione EASC
+- ✅ Fallback automatico a dati VMC funzionante
+- ✅ Test coverage >95% su codice EASC
+- ✅ Documentazione EASC completa
+- ✅ SENS-005 `VmcHeltyFilterWarningBinarySensor` implementato
 - ✅ Zero bug critici aperti
-- ✅ Documentation completa italiano + inglese
-- ✅ Marketing communication eseguiti
 
 ### v1.3.0
+- ✅ Tutti criteri v1.2.0
+- ✅ SENS-004 `VmcHeltyRunningTimeSensor` implementato e testato
+- ✅ 6 blueprint totali disponibili (3 esistenti + 3 nuovi)
+- ✅ Documentation blueprint aggiornata
+
+### v1.4.0
+- ✅ Tutti criteri v1.3.0
+- ✅ Package YAML importabile completo
+- ✅ 4 dashboard views funzionanti
+- ✅ QA completo (integration, performance, accessibility)
+- ✅ Release notes e comunicazione community
+
+### v1.5.0
 - ✅ Quality Scale Gold certificato
 - ✅ Energy Dashboard integration funzionante
 - ✅ Scene e script predefiniti
-- ✅ Tutte translations complete
+- ✅ Tutte translations complete (IT + EN)
 - ✅ Performance benchmark passed
 - ✅ Community feedback positivo (>80%)
 
@@ -1091,12 +1223,20 @@ Legend: ████ = Active Development
 
 ### 2026-03-23 - Initial Roadmap
 - ✅ Created comprehensive roadmap
-- ✅ Defined milestones v1.1.1, v1.2.0, v1.3.0
+- ✅ Defined milestones v1.1.1, v1.2.0, v1.3.0, v1.4.0
 - ✅ Breakdown in sprints with effort estimates
 - ✅ Created 3 blueprint proof-of-concepts
 - ✅ Documented acceptance criteria
 
-### Next Update: 2026-04-05 (end Sprint 1.1)
+### 2026-03-27 - Restructure Milestone Plan
+- ✅ Milestone 2 = v1.2.0 (EASC feature)
+- ✅ Milestone 3 = v1.3.0 (Sensori + Blueprint)
+- ✅ Milestone 4 = v1.4.0 (Package + Dashboard)
+- ✅ Milestone 5 = v1.5.0 (Gold Quality + Energy + Scene/Script)
+- ✅ Sprint numbering allineato con milestone
+- ✅ DOC-011 e REL release steps presenti in ogni milestone
+
+### Next Update: 2026-04-16 (end Sprint 2.1)
 
 ---
 

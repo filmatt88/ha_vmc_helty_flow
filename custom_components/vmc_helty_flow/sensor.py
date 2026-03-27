@@ -59,6 +59,16 @@ from .const import (
     COMFORT_TEMP_REFERENCE,
     COMFORT_TEMP_TOLERABLE_MAX,
     COMFORT_TEMP_TOLERABLE_MIN,
+    CONF_EASC_ABSOLUTE_HUMIDITY,
+    CONF_EASC_COMFORT_INDEX,
+    CONF_EASC_CONFIG,
+    CONF_EASC_DEW_POINT,
+    CONF_EASC_DEW_POINT_DELTA,
+    CONF_EASC_FORMULA,
+    CONF_EASC_HUMIDITY_SOURCE,
+    CONF_EASC_TEMPERATURE_EXTERNAL,
+    CONF_EASC_TEMPERATURE_INTERNAL,
+    CONF_EASC_TEMPERATURE_SOURCE,
     DAILY_AIR_CHANGES_ADEQUATE,
     DAILY_AIR_CHANGES_ADEQUATE_MIN,
     DAILY_AIR_CHANGES_EXCELLENT,
@@ -77,6 +87,8 @@ from .const import (
     DEW_POINT_HUMID_MAX,
     DEW_POINT_VERY_DRY,
     DOMAIN,
+    EASC_FORMULA_MAGNUS,
+    EASC_SOURCE_VMC,
     ENTITY_NAME_PREFIX,
     FAN_SPEED_MAX_NORMAL,
     FANSPEED_MAPPING,
@@ -94,6 +106,8 @@ from .const import (
 )
 from .coordinator import VmcHeltyCoordinator
 from .device_info import VmcHeltyEntity
+from .easc_provider import EASCDataProvider, magnus_coefficients
+from .easc_schema import get_sensor_config, validate_easc_config
 from .helpers import parse_vmsl_response, tcp_send_command
 
 _LOGGER = logging.getLogger(__name__)
@@ -1010,80 +1024,57 @@ class VmcHeltyAbsoluteHumiditySensor(VmcHeltyEntity, SensorEntity):
         self._attr_state_class = SensorStateClass.MEASUREMENT
         self._attr_icon = "mdi:water-percent"
 
+    def _easc_sources(self) -> tuple[str, str, str]:
+        """Return (temperature_source, humidity_source, formula) from EASC config."""
+        easc = validate_easc_config(
+            self.coordinator.config_entry.options.get(CONF_EASC_CONFIG, {})
+        )
+        cfg = get_sensor_config(easc, CONF_EASC_ABSOLUTE_HUMIDITY)
+        return (
+            cfg.get(CONF_EASC_TEMPERATURE_SOURCE, EASC_SOURCE_VMC),
+            cfg.get(CONF_EASC_HUMIDITY_SOURCE, EASC_SOURCE_VMC),
+            cfg.get(CONF_EASC_FORMULA, EASC_FORMULA_MAGNUS),
+        )
+
     @property
     def native_value(self) -> float | None:
-        """Calculate absolute humidity using Magnus-Tetens formula."""
-        if not self.coordinator.data:
+        """Calculate absolute humidity using the configured formula."""
+        t_source, h_source, formula = self._easc_sources()
+        provider = EASCDataProvider(self.hass, self.coordinator)
+        temp_internal = provider.get_temperature(t_source)
+        humidity = provider.get_humidity(h_source)
+
+        if temp_internal is None or humidity is None:
             return None
 
         try:
-            # Ottieni i dati dei sensori dalla stringa VMGI
-            sensors_data = self.coordinator.data.get("sensors", "")
-            if not sensors_data or not sensors_data.startswith("VMGI"):
-                return None
-
-            parts = sensors_data.split(",")
-            if (
-                len(parts) < MIN_RESPONSE_PARTS
-            ):  # Serve almeno temp_int, temp_ext, humidity, co2
-                return None
-
-            # Estrai temperatura interna (pos 1) e umidità (pos 3)
-            temp_internal = float(parts[1]) / 10  # Decimi di °C
-            humidity = float(parts[3]) / 10  # Decimi di %
-
-            if temp_internal is None or humidity is None:
-                return None
-
-            # Formula Magnus-Tetens per umidità assoluta
-            # Costanti per acqua
-            a = 17.27
-            b = 237.7
-
-            # Pressione vapore saturo (hPa) - formula Magnus-Tetens
+            a, b = magnus_coefficients(formula)
             es = 6.112 * math.exp((a * temp_internal) / (b + temp_internal))
-
-            # Pressione vapore reale (hPa)
             e = (humidity / 100.0) * es
-
-            # Umidità assoluta (g/m³) usando formula termodinamica Magnus-Tetens
-            molar_mass = 18.016  # g/mol (peso molecolare acqua)
+            molar_mass = 18.016  # g/mol
             gas_constant = 0.08314  # L·hPa/(mol·K)
-            temp_kelvin = temp_internal + 273.15  # K
-
-            abs_humidity = (e * molar_mass) / (gas_constant * temp_kelvin)
-
-            return round(abs_humidity, 2)
-
+            temp_kelvin = temp_internal + 273.15
+            return round((e * molar_mass) / (gas_constant * temp_kelvin), 2)
         except (ValueError, TypeError, ZeroDivisionError):
             return None
 
     @property
     def extra_state_attributes(self) -> dict[str, Any] | None:
         """Return extra attributes."""
-        if not self.coordinator.data:
-            return None
+        t_source, h_source, formula = self._easc_sources()
+        provider = EASCDataProvider(self.hass, self.coordinator)
+        temp_internal = provider.get_temperature(t_source)
+        humidity = provider.get_humidity(h_source)
 
-        # Ottieni i dati dei sensori dalla stringa VMGI
-        sensors_data = self.coordinator.data.get("sensors", "")
-        if not sensors_data or not sensors_data.startswith("VMGI"):
-            return None
-
-        try:
-            parts = sensors_data.split(",")
-            if len(parts) < MIN_RESPONSE_PARTS:
-                return None
-
-            temp_internal = float(parts[1]) / 10  # Decimi di °C
-            humidity = float(parts[3]) / 10  # Decimi di %
-
-        except (ValueError, IndexError):
+        if temp_internal is None or humidity is None:
             return None
 
         return {
-            "formula": "Magnus-Tetens",
-            "temperature_source": f"{temp_internal}°C",
-            "humidity_source": f"{humidity}%",
+            "formula": formula,
+            "temperature_source": t_source,
+            "humidity_source": h_source,
+            "temperature_value": f"{temp_internal}°C",
+            "humidity_value": f"{humidity}%",
             "precision": "±0.1 g/m³",
             "valid_range": "-40°C to +50°C",
         }
@@ -1102,44 +1093,35 @@ class VmcHeltyDewPointSensor(VmcHeltyEntity, SensorEntity):
         self._attr_state_class = SensorStateClass.MEASUREMENT
         self._attr_icon = "mdi:thermometer-water"
 
+    def _easc_sources(self) -> tuple[str, str, str]:
+        """Return (temperature_source, humidity_source, formula) from EASC config."""
+        easc = validate_easc_config(
+            self.coordinator.config_entry.options.get(CONF_EASC_CONFIG, {})
+        )
+        cfg = get_sensor_config(easc, CONF_EASC_DEW_POINT)
+        return (
+            cfg.get(CONF_EASC_TEMPERATURE_SOURCE, EASC_SOURCE_VMC),
+            cfg.get(CONF_EASC_HUMIDITY_SOURCE, EASC_SOURCE_VMC),
+            cfg.get(CONF_EASC_FORMULA, EASC_FORMULA_MAGNUS),
+        )
+
     @property
     def native_value(self) -> float | None:
-        """Calculate dew point using Magnus-Tetens formula."""
-        if not self.coordinator.data:
+        """Calculate dew point using the configured formula."""
+        t_source, h_source, formula = self._easc_sources()
+        provider = EASCDataProvider(self.hass, self.coordinator)
+        temp_internal = provider.get_temperature(t_source)
+        humidity = provider.get_humidity(h_source)
+
+        if temp_internal is None or humidity is None or humidity <= 0:
             return None
 
         try:
-            # Ottieni i dati dei sensori dalla stringa VMGI
-            sensors_data = self.coordinator.data.get("sensors", "")
-            if not sensors_data or not sensors_data.startswith("VMGI"):
-                return None
-
-            parts = sensors_data.split(",")
-            if len(parts) < MIN_RESPONSE_PARTS:
-                return None
-
-            # Estrai temperatura interna (pos 1) e umidità (pos 3)
-            temp_internal = float(parts[1]) / 10  # Decimi di °C
-            humidity = float(parts[3]) / 10  # Decimi di %
-
-            if temp_internal is None or humidity is None or humidity <= 0:
-                return None
-
-            # Formula Magnus-Tetens per punto di rugiada
-            # Costanti per acqua
-            a = 17.27
-            b = 237.7
-
-            # Calcolo intermedio
+            a, b = magnus_coefficients(formula)
             alpha = ((a * temp_internal) / (b + temp_internal)) + math.log(
                 humidity / 100.0
             )
-
-            # Punto di rugiada
-            dew_point = (b * alpha) / (a - alpha)
-
-            return round(dew_point, 1)
-
+            return round((b * alpha) / (a - alpha), 1)
         except (ValueError, TypeError, ZeroDivisionError):
             return None
 
@@ -1167,32 +1149,23 @@ class VmcHeltyDewPointSensor(VmcHeltyEntity, SensorEntity):
     @property
     def extra_state_attributes(self) -> dict[str, Any] | None:
         """Return extra attributes."""
-        if not self.coordinator.data:
+        t_source, h_source, formula = self._easc_sources()
+        provider = EASCDataProvider(self.hass, self.coordinator)
+        temp_internal = provider.get_temperature(t_source)
+        humidity = provider.get_humidity(h_source)
+
+        if temp_internal is None or humidity is None:
             return None
 
-        # Ottieni i dati dei sensori dalla stringa VMGI
-        sensors_data = self.coordinator.data.get("sensors", "")
-        if not sensors_data or not sensors_data.startswith("VMGI"):
-            return None
-
-        try:
-            parts = sensors_data.split(",")
-            if len(parts) < MIN_RESPONSE_PARTS:
-                return None
-
-            temp_internal = float(parts[1]) / 10  # Decimi di °C
-            humidity = float(parts[3]) / 10  # Decimi di %
-        except (ValueError, IndexError):
-            return None
-
-        # Calcola anche il comfort level basato sul punto di rugiada
         dew_point = self.native_value
         comfort_level, comfort_color = self._calculate_dew_point_comfort(dew_point)
 
         return {
-            "formula": "Magnus-Tetens",
-            "temperature_source": temp_internal,
-            "humidity_source": humidity,
+            "formula": formula,
+            "temperature_source": t_source,
+            "humidity_source": h_source,
+            "temperature_value": temp_internal,
+            "humidity_value": humidity,
             "precision": "±0.2°C",
             "comfort_level": comfort_level,
             "comfort_color": comfort_color,
@@ -1213,38 +1186,38 @@ class VmcHeltyComfortIndexSensor(VmcHeltyEntity, SensorEntity):
         self._attr_native_unit_of_measurement = "%"
         self._attr_icon = "mdi:account-check"
 
+    def _easc_sources(self) -> tuple[str, str, str]:
+        """Return (temperature_source, humidity_source, formula) from EASC config."""
+        easc = validate_easc_config(
+            self.coordinator.config_entry.options.get(CONF_EASC_CONFIG, {})
+        )
+        cfg = get_sensor_config(easc, CONF_EASC_COMFORT_INDEX)
+        return (
+            cfg.get(CONF_EASC_TEMPERATURE_SOURCE, EASC_SOURCE_VMC),
+            cfg.get(CONF_EASC_HUMIDITY_SOURCE, EASC_SOURCE_VMC),
+            cfg.get(CONF_EASC_FORMULA, EASC_FORMULA_MAGNUS),
+        )
+
     @property
     def native_value(self) -> int | None:
         """Calcola l'indice di comfort come percentuale (0-100%)."""
-        if not self.coordinator.data:
+        t_source, h_source, _formula = self._easc_sources()
+        provider = EASCDataProvider(self.hass, self.coordinator)
+        temp = provider.get_temperature(t_source)
+        humidity = provider.get_humidity(h_source)
+
+        if (
+            temp is None
+            or humidity is None
+            or humidity <= 0
+            or humidity > COMFORT_HUMIDITY_MAX
+        ):
             return None
 
         try:
-            # Ottieni i dati dei sensori dalla stringa VMGI
-            sensors_data = self.coordinator.data.get("sensors", "")
-            if not sensors_data or not sensors_data.startswith("VMGI"):
-                return None
-
-            parts = sensors_data.split(",")
-            if len(parts) < MIN_RESPONSE_PARTS:
-                return None
-
-            # Estrai temperatura interna (pos 1) e umidità (pos 3)
-            temp = float(parts[1]) / 10  # Decimi di °C
-            humidity = float(parts[3]) / 10  # Decimi di %
-
-            if humidity <= 0 or humidity > COMFORT_HUMIDITY_MAX:
-                return None
-
-            # Indice basato su temperature e umidità ottimali
             temp_comfort = self._calculate_temperature_comfort(temp)
             humidity_comfort = self._calculate_humidity_comfort(humidity)
-
-            # Combina i due fattori con peso bilanciato
-            comfort_index = (temp_comfort * 0.6 + humidity_comfort * 0.4) * 100
-
-            return round(comfort_index)
-
+            return round((temp_comfort * 0.6 + humidity_comfort * 0.4) * 100)
         except (ValueError, TypeError, ZeroDivisionError):
             return None
 
@@ -1297,29 +1270,19 @@ class VmcHeltyComfortIndexSensor(VmcHeltyEntity, SensorEntity):
         """Attributi aggiuntivi con dettagli del comfort."""
         attributes = dict(super().extra_state_attributes or {})
 
-        if not self.coordinator.data:
+        t_source, h_source, _formula = self._easc_sources()
+        provider = EASCDataProvider(self.hass, self.coordinator)
+        temp = provider.get_temperature(t_source)
+        humidity = provider.get_humidity(h_source)
+
+        if temp is None or humidity is None:
             return attributes
 
         try:
-            # Ottieni i dati dei sensori dalla stringa VMGI
-            sensors_data = self.coordinator.data.get("sensors", "")
-            if not sensors_data or not sensors_data.startswith("VMGI"):
-                return attributes
-
-            parts = sensors_data.split(",")
-            if len(parts) < MIN_RESPONSE_PARTS:
-                return attributes
-
-            # Estrai temperatura interna (pos 1) e umidità (pos 3)
-            temp = float(parts[1]) / 10  # Decimi di °C
-            humidity = float(parts[3]) / 10  # Decimi di %
-
             temp_comfort = self._calculate_temperature_comfort(temp)
             humidity_comfort = self._calculate_humidity_comfort(humidity)
-
             comfort_value = self.native_value
             if comfort_value is not None:
-                # Classificazione livello comfort
                 if comfort_value >= COMFORT_INDEX_EXCELLENT:
                     comfort_category = "Eccellente"
                 elif comfort_value >= COMFORT_INDEX_GOOD:
@@ -1333,6 +1296,8 @@ class VmcHeltyComfortIndexSensor(VmcHeltyEntity, SensorEntity):
 
                 attributes.update(
                     {
+                        "temperature_source": t_source,
+                        "humidity_source": h_source,
                         "comfort_category": comfort_category,
                         "temperature_comfort": f"{temp_comfort:.2f}",
                         "humidity_comfort": f"{humidity_comfort:.2f}",
@@ -1342,7 +1307,6 @@ class VmcHeltyComfortIndexSensor(VmcHeltyEntity, SensorEntity):
                         "current_humidity": f"{humidity}%",
                     }
                 )
-
         except (ValueError, TypeError, ZeroDivisionError):
             pass
 
@@ -1364,48 +1328,45 @@ class VmcHeltyDewPointDeltaSensor(VmcHeltyEntity, SensorEntity):
         self._attr_state_class = SensorStateClass.MEASUREMENT
         self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
 
+    def _easc_sources(self) -> tuple[str, str, str, str]:
+        """Return (t_internal_source, t_external_source, h_source, formula)."""
+        easc = validate_easc_config(
+            self.coordinator.config_entry.options.get(CONF_EASC_CONFIG, {})
+        )
+        cfg = get_sensor_config(easc, CONF_EASC_DEW_POINT_DELTA)
+        return (
+            cfg.get(CONF_EASC_TEMPERATURE_INTERNAL, EASC_SOURCE_VMC),
+            cfg.get(CONF_EASC_TEMPERATURE_EXTERNAL, EASC_SOURCE_VMC),
+            cfg.get(CONF_EASC_HUMIDITY_SOURCE, EASC_SOURCE_VMC),
+            cfg.get(CONF_EASC_FORMULA, EASC_FORMULA_MAGNUS),
+        )
+
     @property
     def native_value(self) -> float | None:
         """Calcola il delta punto di rugiada (interno - esterno)."""
-        if not self.coordinator.data:
+        t_int_source, t_ext_source, h_source, formula = self._easc_sources()
+        provider = EASCDataProvider(self.hass, self.coordinator)
+        temp_internal = provider.get_temperature(t_int_source)
+        temp_external = provider.get_temperature_external(t_ext_source)
+        humidity = provider.get_humidity(h_source)
+
+        if temp_internal is None or temp_external is None or humidity is None:
+            return None
+        if humidity <= 0 or humidity > COMFORT_HUMIDITY_MAX:
             return None
 
         try:
-            # Ottieni i dati dei sensori dalla stringa VMGI
-            sensors_data = self.coordinator.data.get("sensors", "")
-            if not sensors_data or not sensors_data.startswith("VMGI"):
-                return None
-
-            parts = sensors_data.split(",")
-            if len(parts) < MIN_RESPONSE_PARTS:
-                return None
-
-            # Estrai temperature e umidità
-            temp_internal = float(parts[1]) / 10  # Decimi di °C (pos 1)
-            temp_external = float(parts[2]) / 10  # Decimi di °C (pos 2)
-            humidity = float(parts[3]) / 10  # Decimi di % (pos 3)
-
-            if humidity <= 0 or humidity > COMFORT_HUMIDITY_MAX:
-                return None
-
-            # Calcola i punti di rugiada interno ed esterno
-            internal_dew_point = self._calculate_dew_point(temp_internal, humidity)
-            external_dew_point = self._calculate_dew_point(temp_external, humidity)
-
-            delta = internal_dew_point - external_dew_point
-
-            return round(delta, 1)
-
+            internal_dew = self._calculate_dew_point(temp_internal, humidity, formula)
+            external_dew = self._calculate_dew_point(temp_external, humidity, formula)
+            return round(internal_dew - external_dew, 1)
         except (ValueError, TypeError, ZeroDivisionError):
             return None
 
-    def _calculate_dew_point(self, temperature: float, humidity: float) -> float:
-        """Calcola il punto di rugiada usando la formula Magnus-Tetens."""
-        # Costanti Magnus-Tetens per acqua
-        a = 17.27
-        b = 237.7
-
-        # Calcola il punto di rugiada
+    def _calculate_dew_point(
+        self, temperature: float, humidity: float, formula: str = EASC_FORMULA_MAGNUS
+    ) -> float:
+        """Calcola il punto di rugiada usando la formula specificata."""
+        a, b = magnus_coefficients(formula)
         gamma = (a * temperature) / (b + temperature) + math.log(humidity / 100.0)
         return (b * gamma) / (a - gamma)
 
@@ -1414,45 +1375,41 @@ class VmcHeltyDewPointDeltaSensor(VmcHeltyEntity, SensorEntity):
         """Attributi aggiuntivi con informazioni sul rischio condensazione."""
         attributes = dict(super().extra_state_attributes or {})
 
-        if not self.coordinator.data:
+        t_int_source, t_ext_source, h_source, formula = self._easc_sources()
+        provider = EASCDataProvider(self.hass, self.coordinator)
+        temp_internal = provider.get_temperature(t_int_source)
+        temp_external = provider.get_temperature_external(t_ext_source)
+        humidity = provider.get_humidity(h_source)
+
+        if temp_internal is None or temp_external is None or humidity is None:
             return attributes
 
         try:
-            # Ottieni i dati dei sensori dalla stringa VMGI
-            sensors_data = self.coordinator.data.get("sensors", "")
-            if not sensors_data or not sensors_data.startswith("VMGI"):
-                return attributes
-
-            parts = sensors_data.split(",")
-            if len(parts) < MIN_RESPONSE_PARTS:
-                return attributes
-
             delta_value = self.native_value
             if delta_value is not None:
-                # Classificazione del rischio di condensazione
                 risk_info = self._get_condensation_risk(delta_value)
-
-                # Estrai dati dalla stringa VMGI
-                temp_internal = float(parts[1]) / 10  # Decimi di °C (pos 1)
-                temp_external = float(parts[2]) / 10  # Decimi di °C (pos 2)
-                humidity = float(parts[3]) / 10  # Decimi di % (pos 3)
-
-                internal_dew_point = self._calculate_dew_point(temp_internal, humidity)
-                external_dew_point = self._calculate_dew_point(temp_external, humidity)
-
+                internal_dew = self._calculate_dew_point(
+                    temp_internal, humidity, formula
+                )
+                external_dew = self._calculate_dew_point(
+                    temp_external, humidity, formula
+                )
                 attributes.update(
                     {
+                        "temperature_internal_source": t_int_source,
+                        "temperature_external_source": t_ext_source,
+                        "humidity_source": h_source,
+                        "formula": formula,
                         "risk_level": risk_info["level"],
                         "risk_description": risk_info["description"],
                         "recommended_action": risk_info["action"],
-                        "internal_dew_point": f"{internal_dew_point:.1f}°C",
-                        "external_dew_point": f"{external_dew_point:.1f}°C",
+                        "internal_dew_point": f"{internal_dew:.1f}°C",
+                        "external_dew_point": f"{external_dew:.1f}°C",
                         "internal_temperature": f"{temp_internal}°C",
                         "external_temperature": f"{temp_external}°C",
                         "humidity": f"{humidity}%",
                     }
                 )
-
         except (ValueError, TypeError, ZeroDivisionError):
             pass
 

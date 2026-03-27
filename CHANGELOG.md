@@ -5,6 +5,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] — v1.2.0 (in progress)
+
+### ✨ Added
+
+#### EASC — External Advanced Sensor Configuration
+
+- **`EASCDataProvider`** (`easc_provider.py`): single access point for temperature and humidity data used by the four advanced calculated sensors. Reads from the VMC device (`source = "vmc"`) or any Home Assistant entity, with automatic unit conversion (°F→°C, 0–1 fraction→%) and automatic VMC fallback when an external entity is unavailable or non-numeric.
+- **`magnus_coefficients(formula)`**: pure function returning `(a, b)` coefficients for two supported formulas:
+  - `"magnus"` — Magnus-Tetens (a=17.27, b=237.7), general purpose −40 °C to +50 °C.
+  - `"custom"` — August-Roche-Magnus (a=17.625, b=243.04), WMO standard, more accurate 0–60 °C.
+- **EASC Options Flow step** (`async_step_advanced_sensors`): new two-step options form. Step 1 adds a *"Configure advanced sensors"* checkbox. Step 2 exposes 17 fields (enable, temperature source, humidity source, formula) for each of the four advanced sensors. Sources validated with `validate_source`; formulas validated with `validate_formula`.
+- **EASC schema helpers** (`easc_schema.py`): `validate_easc_config`, `validate_source`, `validate_formula`, `get_sensor_config`, `is_sensor_enabled`.
+- **EASC diagnostics** (`diagnostics.py`): new `easc` section in `async_get_config_entry_diagnostics` showing configured/enabled state and availability of each source entity (`available`, `state`, `last_updated`, `reason`).
+- **New advanced sensor** `VmcHeltyAbsoluteHumiditySensor`: calculates absolute humidity in g/m³ using the Magnus formula. Supports EASC external sources (SENS-004 / EASC-004).
+- **Advanced sensors refactored** to use `EASCDataProvider`: `VmcHeltyDewPointSensor`, `VmcHeltyComfortIndexSensor`, `VmcHeltyDewPointDeltaSensor` all support configurable external sources and formula selection (EASC-005→007, EASC-009).
+- **New binary sensor** `VmcHeltyFilterWarningBinarySensor`: turns ON when filter hours exceed 90 % of maximum filter life (~15 970 h out of 17 744 h) (SENS-005).
+- **Debug logging** for every EASC data read: source, value, and fallback reason emitted at `DEBUG` level (EASC-008).
+- **`strings.json`** updated with labels and descriptions for all 17 EASC options fields and `invalid_easc_formula` error key.
+- **Documentation**: `docs/EXTERNAL_ADVANCED_SENSORS.md` — full EASC guide including step-by-step setup, source field reference, formula comparison table, Netatmo/ESPHome/weather integration examples, automatic fallback behaviour, and troubleshooting.
+
+### 🔄 Changed
+
+- `_flatten_easc_config` / `_build_easc_config_from_input` (config_flow helpers) now include per-sensor `formula` fields (total: 17 flat keys, up from 13).
+- `VmcHeltyDewPointDeltaSensor._calculate_dew_point()` now accepts a `formula` parameter and uses `magnus_coefficients(formula)` instead of hardcoded coefficients.
+- `extra_state_attributes` for all four advanced sensors now report `"formula"`, `"temperature_source"`, and `"humidity_source"` reflecting the active configuration.
+
+### 🧪 Testing
+
+- **757 tests** — all passing. Coverage **84 %** (gate: 65 %).
+- New test files:
+  - `tests/test_easc_provider.py` — 45 tests: `celsius_from_unit`, `humidity_to_percent`, `magnus_coefficients`, `EASCDataProvider` (VMC source, entity source, fallback, logging).
+  - `tests/test_easc_integration_sensors.py` — 24 tests: 3 source scenarios × 4 advanced sensors (VMC, external entity, fallback), error conditions, formula attribute propagation.
+  - `tests/test_easc_full_flow.py` — 14 tests: full options→sensor pipeline, multi-sensor simultaneous operation, non-EASC sensor regression, config flow round-trip, `is_sensor_enabled`.
+  - `tests/test_easc_options_flow.py` — 23 tests: `_flatten_easc_config`, `_build_easc_config_from_input`, options step init/advanced_sensors, formula validation.
+
+### 📚 Documentation
+
+- `README.md`: added EASC quick-setup section with Netatmo example, updated sensor list with `(EASC-enabled)` tags, updated "What's new" section.
+- `docs/EXTERNAL_ADVANCED_SENSORS.md`: new comprehensive EASC guide.
+
+---
+
 ## [1.1.1] - 2026-03-26
 
 ### ⚠️ Breaking changes

@@ -14,6 +14,7 @@ def mock_coordinator():
     coordinator.ip = "192.168.1.100"
     coordinator.name = "VMC Test"
     coordinator.name_slug = "vmc_helty_testvmc"
+    coordinator.config_entry.options = {}
     coordinator.data = {
         "sensors": "VMGI,245,205,650,450,50,75,80,90,100,1,2,3,4,1000",
         "status": "VMGO,3,1,25,0,24",

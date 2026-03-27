@@ -12,6 +12,7 @@ class TestVmcHeltyDewPointDeltaSensor:
     def test_init(self):
         """Test inizializzazione del sensore."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         mock_coordinator.ip = "192.168.1.100"
         mock_coordinator.name = "Test"
         mock_coordinator.name_slug = "vmc_helty_testvmc"
@@ -28,6 +29,7 @@ class TestVmcHeltyDewPointDeltaSensor:
     def test_native_value_no_data(self):
         """Test valore con dati mancanti."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         mock_coordinator.data = None
 
         sensor = VmcHeltyDewPointDeltaSensor(mock_coordinator)
@@ -36,6 +38,7 @@ class TestVmcHeltyDewPointDeltaSensor:
     def test_native_value_no_sensors_data(self):
         """Test valore con dati sensori mancanti."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         mock_coordinator.data = {"other_key": "value"}
 
         sensor = VmcHeltyDewPointDeltaSensor(mock_coordinator)
@@ -44,6 +47,7 @@ class TestVmcHeltyDewPointDeltaSensor:
     def test_native_value_invalid_sensors_data(self):
         """Test valore con dati sensori non validi."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         mock_coordinator.data = {"sensors": "INVALID_DATA"}
 
         sensor = VmcHeltyDewPointDeltaSensor(mock_coordinator)
@@ -52,6 +56,7 @@ class TestVmcHeltyDewPointDeltaSensor:
     def test_native_value_insufficient_data(self):
         """Test valore con dati insufficienti."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         mock_coordinator.data = {"sensors": "VMGI,220,180,500"}  # Troppo pochi campi
 
         sensor = VmcHeltyDewPointDeltaSensor(mock_coordinator)
@@ -60,6 +65,7 @@ class TestVmcHeltyDewPointDeltaSensor:
     def test_calculation_standard_conditions(self):
         """Test calcolo delta punto di rugiada in condizioni standard."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         # VMGI,220,150,500,800,0,0,0,0,0,0,150,0,0,0
         # temp_int=22.0°C, temp_ext=15.0°C, humidity=50.0%
         mock_coordinator.data = {
@@ -90,6 +96,7 @@ class TestVmcHeltyDewPointDeltaSensor:
     def test_calculation_same_temperatures(self):
         """Test calcolo con temperature interne ed esterne uguali."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         # VMGI,200,200,600,800,0,0,0,0,0,0,150,0,0,0
         # temp_int=20.0°C, temp_ext=20.0°C, humidity=60.0%
         mock_coordinator.data = {
@@ -106,6 +113,7 @@ class TestVmcHeltyDewPointDeltaSensor:
     def test_calculation_internal_colder_than_external(self):
         """Test calcolo con interno più freddo dell'esterno."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         # VMGI,150,250,400,800,0,0,0,0,0,0,150,0,0,0
         # temp_int=15.0°C, temp_ext=25.0°C, humidity=40.0%
         mock_coordinator.data = {
@@ -121,6 +129,7 @@ class TestVmcHeltyDewPointDeltaSensor:
     def test_calculation_zero_humidity(self):
         """Test gestione umidità zero."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         mock_coordinator.data = {
             "sensors": "VMGI,220,150,0,800,0,0,0,0,0,0,150,0,0,0",
         }
@@ -131,6 +140,7 @@ class TestVmcHeltyDewPointDeltaSensor:
     def test_calculation_excessive_humidity(self):
         """Test gestione umidità eccessiva."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         mock_coordinator.data = {
             "sensors": "VMGI,220,150,850,800,0,0,0,0,0,0,150,0,0,0",  # 85%
         }
@@ -144,6 +154,7 @@ class TestVmcHeltyDewPointDeltaSensor:
     def test_dew_point_calculation_function(self):
         """Test funzione di calcolo punto di rugiada."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         sensor = VmcHeltyDewPointDeltaSensor(mock_coordinator)
 
         # Test con valori noti
@@ -160,6 +171,7 @@ class TestVmcHeltyDewPointDeltaSensor:
     def test_extra_state_attributes_complete(self):
         """Test attributi aggiuntivi con dati completi."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         # VMGI,220,150,500,800,0,0,0,0,0,0,150,0,0,0
         mock_coordinator.data = {
             "sensors": "VMGI,220,150,500,800,0,0,0,0,0,0,150,0,0,0",
@@ -186,6 +198,7 @@ class TestVmcHeltyDewPointDeltaSensor:
     def test_extra_state_attributes_no_data(self):
         """Test attributi aggiuntivi senza dati."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         mock_coordinator.data = None
 
         sensor = VmcHeltyDewPointDeltaSensor(mock_coordinator)
@@ -197,6 +210,7 @@ class TestVmcHeltyDewPointDeltaSensor:
     def test_condensation_risk_classification(self):
         """Test classificazione del rischio di condensazione."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         sensor = VmcHeltyDewPointDeltaSensor(mock_coordinator)
 
         # Test diversi livelli di rischio
@@ -217,6 +231,7 @@ class TestVmcHeltyDewPointDeltaSensor:
     def test_invalid_data_types(self):
         """Test gestione di tipi di dati non validi."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         sensor = VmcHeltyDewPointDeltaSensor(mock_coordinator)
 
         # Test con dati malformati
@@ -240,6 +255,7 @@ class TestVmcHeltyDewPointDeltaSensor:
     def test_mathematical_consistency(self):
         """Test consistenza matematica dei calcoli."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         sensor = VmcHeltyDewPointDeltaSensor(mock_coordinator)
 
         # Test che delta sia coerente con differenze di temperatura
@@ -275,6 +291,7 @@ class TestVmcHeltyDewPointDeltaSensor:
     def test_extreme_conditions(self):
         """Test comportamento in condizioni estreme."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         sensor = VmcHeltyDewPointDeltaSensor(mock_coordinator)
 
         # Test temperature molto diverse
@@ -296,6 +313,7 @@ class TestVmcHeltyDewPointDeltaSensor:
     def test_precision_and_rounding(self):
         """Test precisione e arrotondamento dei risultati."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         # VMGI,235,187,649,800,0,0,0,0,0,0,150,0,0,0
         # temp_int=23.5°C, temp_ext=18.7°C, humidity=64.9%
         mock_coordinator.data = {

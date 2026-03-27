@@ -2,7 +2,6 @@
 
 [![hacs][hacsbadge]][hacs]
 [![GitHub Release][releases-shield]][releases]
-[![Version](https://img.shields.io/badge/version-1.1.1-blue.svg)](https://github.com/darius1907/ha_vmc_helty_flow/releases)
 [![GitHub Activity][commits-shield]][commits]
 [![License][license-shield]][license]
 
@@ -103,14 +102,17 @@ Complete integration for Helty Flow Mechanical Ventilation (VMC) systems with Ho
 
 ### 📈 **Advanced Sensors**
 
-- **Dew Point**: Dew point calculation for condensation prevention
-- **Comfort Index**: Comfort index based on temperature and humidity
-- **Dew Point Delta**: Difference between outdoor temperature and dew point
+- **Absolute Humidity**: Calculated absolute humidity in g/m³ *(EASC-enabled)*
+- **Dew Point**: Dew point calculation for condensation prevention *(EASC-enabled)*
+- **Comfort Index**: Comfort index based on temperature and humidity *(EASC-enabled)*
+- **Dew Point Delta**: Difference between indoor and outdoor dew point *(EASC-enabled)*
 - **Air Exchange Time**: Air exchange time based on fan speed
 - **Daily Air Changes**: Number of daily air changes
 - **Filter Life Percentage**: Remaining filter life based on filter working hours
 - **Power Sensor**: Instantaneous power estimate based on fan speed
 - **Daily Energy Estimate**: Daily estimated energy consumption
+
+> 🔗 **EASC-enabled sensors** support external data sources. See [External Advanced Sensor Configuration](docs/EXTERNAL_ADVANCED_SENSORS.md) for setup details.
 
 ### 🚨 **Alert Binary Sensors**
 
@@ -226,6 +228,30 @@ Port: 5001
 Timeout: 15 seconds
 ```
 
+## 🔬 **External Advanced Sensor Configuration (EASC)**
+
+EASC lets the four calculated sensors read temperature and humidity from **any Home Assistant entity** instead of the VMC's built-in sensors — useful when you want to use a room thermostat, a Netatmo weather station, or an ESPHome sensor for more accurate calculations.
+
+### Quick setup
+
+1. Go to **Settings → Devices & Services → VMC Helty Flow → Configure**
+2. Enable **"Configure advanced sensors (EASC)"** → **Submit**
+3. For each sensor, enter an entity_id (e.g. `sensor.living_room_temperature`) or keep `vmc`
+4. Select the calculation formula: `magnus` (Magnus-Tetens, default) or `custom` (August-Roche-Magnus, WMO)
+
+When an external entity is unavailable, the sensor **automatically falls back** to VMC data.
+
+### Example — use Netatmo room sensor
+
+```text
+Dew Point → temperature source: sensor.netatmo_living_room_temperature
+Dew Point → humidity source:    sensor.netatmo_living_room_humidity
+```
+
+📖 **Full documentation**: [docs/EXTERNAL_ADVANCED_SENSORS.md](docs/EXTERNAL_ADVANCED_SENSORS.md)
+
+---
+
 ## 🔄 **Automations and Integrations**
 
 All entities are fully integrated with Home Assistant:
@@ -305,12 +331,15 @@ We have an active development roadmap with exciting features planned!
 - **[Improvement Plan](IMPROVEMENT_PLAN.md)** - Complete analysis and proposed improvements for upcoming versions
 - **[Blueprint Guide](blueprints/BLUEPRINT_GUIDE.md)** - Comprehensive automation blueprint documentation
 
-### 🎯 Upcoming Features (v1.2.0+)
+### 🎯 What's new in v1.2.0 (in progress)
 
-**High Priority**:
+**Already shipped**:
+- 🔬 **EASC — External Advanced Sensor Configuration**: Connect Absolute Humidity, Dew Point, Comfort Index, and Dew Point Delta to any HA entity with automatic VMC fallback. Supports Magnus-Tetens and August-Roche-Magnus formulas. See [docs/EXTERNAL_ADVANCED_SENSORS.md](docs/EXTERNAL_ADVANCED_SENSORS.md).
+- 🚨 **Filter Warning Binary Sensor**: Alerts when filter hours exceed 90% of maximum life.
+
+**Upcoming**:
 - 🔔 **Notification System**: Complete alerting for critical events (filter, air quality, offline)
-- 📘 **6 New Automation Blueprints**: Air quality adaptive, humidity control, filter reminders, and more
-- 📊 **Statistical Sensors**: Filter life percentage, energy estimates, running time tracking
+- 📘 **Automation Blueprints**: Air quality adaptive, humidity control, filter reminders
 - 📦 **Ready-to-Use Dashboard Package**: Complete importable package with helpers, automations, and views
 
 **Medium Priority** (v1.3.0):

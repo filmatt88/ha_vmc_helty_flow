@@ -5,12 +5,24 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
 from .const import (
+    CONF_EASC_ABSOLUTE_HUMIDITY,
+    CONF_EASC_COMFORT_INDEX,
+    CONF_EASC_CONFIG,
+    CONF_EASC_DEW_POINT,
+    CONF_EASC_DEW_POINT_DELTA,
+    CONF_EASC_ENABLED,
+    CONF_EASC_HUMIDITY_SOURCE,
+    CONF_EASC_TEMPERATURE_EXTERNAL,
+    CONF_EASC_TEMPERATURE_INTERNAL,
+    CONF_EASC_TEMPERATURE_SOURCE,
     DIAG_LIGHTS_LEVEL_INDEX,
     DIAG_LIGHTS_TIMER_INDEX,
     DIAG_PANEL_LED_INDEX,
     DIAG_SENSORS_INDEX,
     DOMAIN,
+    EASC_SOURCE_VMC,
 )
+from .easc_schema import get_sensor_config, validate_easc_config
 
 # Campi sensibili da oscurare nei diagnostics
 TO_REDACT = {
@@ -98,6 +110,77 @@ async def async_get_config_entry_diagnostics(
                 }
         except Exception:
             diagnostics_data["device_status"] = {"parsing_error": True}
+
+    # EASC configuration and entity availability
+    easc_raw = config_entry.options.get(CONF_EASC_CONFIG, {})
+    easc_cfg = validate_easc_config(easc_raw)
+
+    def _entity_state(entity_id: str) -> dict:
+        """Return availability info for a single source entity."""
+        if entity_id == EASC_SOURCE_VMC:
+            return {"source": "vmc", "available": True}
+        state = hass.states.get(entity_id)
+        if state is None:
+            return {
+                "source": entity_id,
+                "available": False,
+                "reason": "entity_not_found",
+            }
+        if state.state in ("unavailable", "unknown"):
+            return {
+                "source": entity_id,
+                "available": False,
+                "reason": state.state,
+                "last_updated": (
+                    state.last_updated.isoformat() if state.last_updated else None
+                ),
+            }
+        return {
+            "source": entity_id,
+            "available": True,
+            "state": state.state,
+            "last_updated": (
+                state.last_updated.isoformat() if state.last_updated else None
+            ),
+        }
+
+    base_sensors = {
+        CONF_EASC_ABSOLUTE_HUMIDITY: "absolute_humidity",
+        CONF_EASC_DEW_POINT: "dew_point",
+        CONF_EASC_COMFORT_INDEX: "comfort_index",
+    }
+
+    easc_diag: dict = {}
+    for sensor_key, label in base_sensors.items():
+        cfg = get_sensor_config(easc_cfg, sensor_key)
+        easc_diag[label] = {
+            "enabled": cfg.get(CONF_EASC_ENABLED, False),
+            "temperature_source": _entity_state(
+                cfg.get(CONF_EASC_TEMPERATURE_SOURCE, EASC_SOURCE_VMC)
+            ),
+            "humidity_source": _entity_state(
+                cfg.get(CONF_EASC_HUMIDITY_SOURCE, EASC_SOURCE_VMC)
+            ),
+        }
+
+    dpd_cfg = get_sensor_config(easc_cfg, CONF_EASC_DEW_POINT_DELTA)
+    easc_diag["dew_point_delta"] = {
+        "enabled": dpd_cfg.get(CONF_EASC_ENABLED, False),
+        "temperature_internal_source": _entity_state(
+            dpd_cfg.get(CONF_EASC_TEMPERATURE_INTERNAL, EASC_SOURCE_VMC)
+        ),
+        "temperature_external_source": _entity_state(
+            dpd_cfg.get(CONF_EASC_TEMPERATURE_EXTERNAL, EASC_SOURCE_VMC)
+        ),
+        "humidity_source": _entity_state(
+            dpd_cfg.get(CONF_EASC_HUMIDITY_SOURCE, EASC_SOURCE_VMC)
+        ),
+    }
+
+    diagnostics_data["easc"] = {
+        "configured": bool(easc_raw),
+        "sensors": easc_diag,
+    }
 
     return diagnostics_data
 
