@@ -118,18 +118,72 @@
           "room_volume": "Volume stanza (m³)",
           "scan_interval": "Intervallo di aggiornamento (secondi)",
           "timeout": "Timeout connessioni (secondi)",
-          "retry_attempts": "Tentativi di riconnessione"
+          "retry_attempts": "Tentativi di riconnessione",
+          "configure_easc": "Configura sensori avanzati (EASC)"
         },
         "data_description": {
           "room_volume": "Volume della stanza in metri cubi per calcoli accurati dei ricambi d'aria (5-200 m³)",
           "scan_interval": "Frequenza di aggiornamento dei dati dal dispositivo VMC (30-600 secondi)",
           "timeout": "Timeout per le connessioni TCP al dispositivo (5-60 secondi)",
-          "retry_attempts": "Numero di tentativi in caso di errore di comunicazione (1-10)"
+          "retry_attempts": "Numero di tentativi in caso di errore di comunicazione (1-10)",
+          "configure_easc": "Spunta per aprire la configurazione dei sensori avanzati (umidità assoluta, punto di rugiada, indice di comfort, delta punto di rugiada)"
+        }
+      },
+      "advanced_sensors": {
+        "title": "Sensori Avanzati EASC",
+        "description": "Configura le sorgenti dati per i sensori avanzati calcolati. Seleziona un'entità HA oppure lascia vuoto per usare i dati del dispositivo VMC.",
+        "data": {
+          "abs_hum_enabled": "Abilita Umidità Assoluta",
+          "abs_hum_temperature_source": "Umidità Assoluta — sorgente temperatura",
+          "abs_hum_humidity_source": "Umidità Assoluta — sorgente umidità",
+          "abs_hum_formula": "Umidità Assoluta — formula",
+          "dew_point_enabled": "Abilita Punto di Rugiada",
+          "dew_point_temperature_source": "Punto di Rugiada — sorgente temperatura",
+          "dew_point_humidity_source": "Punto di Rugiada — sorgente umidità",
+          "dew_point_formula": "Punto di Rugiada — formula",
+          "comfort_index_enabled": "Abilita Indice di Comfort",
+          "comfort_index_temperature_source": "Indice di Comfort — sorgente temperatura",
+          "comfort_index_humidity_source": "Indice di Comfort — sorgente umidità",
+          "comfort_index_formula": "Indice di Comfort — formula",
+          "dew_point_delta_enabled": "Abilita Delta Punto di Rugiada",
+          "dew_point_delta_temperature_internal": "Delta Rugiada — temperatura interna",
+          "dew_point_delta_temperature_external": "Delta Rugiada — temperatura esterna",
+          "dew_point_delta_humidity_source": "Delta Rugiada — sorgente umidità",
+          "dew_point_delta_formula": "Delta Rugiada — formula"
+        },
+        "data_description": {
+          "abs_hum_enabled": "Attiva il sensore di umidità assoluta calcolata (g/m³)",
+          "abs_hum_temperature_source": "Seleziona un sensore di temperatura oppure lascia vuoto per usare il VMC",
+          "abs_hum_humidity_source": "Seleziona un sensore di umidità oppure lascia vuoto per usare il VMC",
+          "abs_hum_formula": "Magnus-Tetens (standard) oppure August-Roche-Magnus (WMO, più preciso 0-60°C)",
+          "dew_point_enabled": "Attiva il sensore del punto di rugiada calcolato (°C)",
+          "dew_point_temperature_source": "Seleziona un sensore di temperatura oppure lascia vuoto per usare il VMC",
+          "dew_point_humidity_source": "Seleziona un sensore di umidità oppure lascia vuoto per usare il VMC",
+          "dew_point_formula": "Magnus-Tetens (standard) oppure August-Roche-Magnus (WMO, più preciso 0-60°C)",
+          "comfort_index_enabled": "Attiva il sensore dell'indice di comfort termoigrometrico (0-100)",
+          "comfort_index_temperature_source": "Seleziona un sensore di temperatura oppure lascia vuoto per usare il VMC",
+          "comfort_index_humidity_source": "Seleziona un sensore di umidità oppure lascia vuoto per usare il VMC",
+          "comfort_index_formula": "Magnus-Tetens (standard) oppure August-Roche-Magnus (WMO, più preciso 0-60°C)",
+          "dew_point_delta_enabled": "Attiva il sensore del delta tra punto di rugiada interno ed esterno (°C)",
+          "dew_point_delta_temperature_internal": "Seleziona un sensore per la temperatura interna oppure lascia vuoto per usare il VMC",
+          "dew_point_delta_temperature_external": "Seleziona un sensore per la temperatura esterna oppure lascia vuoto per usare il VMC",
+          "dew_point_delta_humidity_source": "Seleziona un sensore di umidità oppure lascia vuoto per usare il VMC",
+          "dew_point_delta_formula": "Magnus-Tetens (standard) oppure August-Roche-Magnus (WMO, più preciso 0-60°C)"
         }
       }
+    },
+    "error": {
+      "invalid_easc_source": "Valore non valido: usa 'vmc' oppure un entity_id Home Assistant valido (es. sensor.nome_sensore)",
+      "invalid_easc_formula": "Formula non valida: usa 'magnus' (Magnus-Tetens) oppure 'custom' (August-Roche-Magnus)"
     }
   },
   "selector": {
+    "formula": {
+      "options": {
+        "magnus": "Magnus-Tetens",
+        "custom": "August-Roche-Magnus (WMO)"
+      }
+    },
     "scan_mode": {
       "options": {
         "full": "Scansione completa",

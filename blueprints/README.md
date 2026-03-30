@@ -8,7 +8,7 @@ For the English version, see [BLUEPRINT_GUIDE_EN.md](BLUEPRINT_GUIDE_EN.md).
 
 ## 📅 VMC Schedule Plan – Boost giorno/notte base
 
-[![Importa in Home Assistant](https://my.home-assistant.io/redirect/blueprint_import/badge.svg?url=https://raw.githubusercontent.com/darius1907/ha_vmc_helty_flow/main/blueprints/automation/vmc_schedule_plan/vmc_schedule_plan.yaml)](https://my.home-assistant.io/redirect/blueprint_import/?url=https://raw.githubusercontent.com/darius1907/ha_vmc_helty_flow/main/blueprints/automation/vmc_schedule_plan/vmc_schedule_plan.yaml)
+[![Importa in Home Assistant](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fraw.githubusercontent.com%2Fdarius1907%2Fha_vmc_helty_flow%2Fmain%2Fblueprints%2Fautomation%2Fvmc_schedule_plan%2Fvmc_schedule_plan.yaml)
 
 Gestisce cicli di boost giorno/notte con velocità fisse configurabili. Nessun sensore richiesto.
 
@@ -20,7 +20,7 @@ Gestisce cicli di boost giorno/notte con velocità fisse configurabili. Nessun s
 
 ## ⚡ VMC Schedule Boost – Cicli boost avanzati
 
-[![Importa in Home Assistant](https://my.home-assistant.io/redirect/blueprint_import/badge.svg?url=https://raw.githubusercontent.com/darius1907/ha_vmc_helty_flow/main/blueprints/automation/vmc_schedule_plan/vmc_schedule_boost.yaml)](https://my.home-assistant.io/redirect/blueprint_import/?url=https://raw.githubusercontent.com/darius1907/ha_vmc_helty_flow/main/blueprints/automation/vmc_schedule_plan/vmc_schedule_boost.yaml)
+[![Importa in Home Assistant](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fraw.githubusercontent.com%2Fdarius1907%2Fha_vmc_helty_flow%2Fmain%2Fblueprints%2Fautomation%2Fvmc_schedule_plan%2Fvmc_schedule_boost.yaml)
 
 Cicli boost periodici con durate configurabili separatamente per giorno e notte. Ottimizza il ricambio d'aria con ventilazione a impulsi.
 
@@ -30,7 +30,7 @@ Cicli boost periodici con durate configurabili separatamente per giorno e notte.
 
 ## 🌬️ VMC Air Quality Adaptive – Ventilazione adattiva qualità aria
 
-[![Importa in Home Assistant](https://my.home-assistant.io/redirect/blueprint_import/badge.svg?url=https://raw.githubusercontent.com/darius1907/ha_vmc_helty_flow/main/blueprints/automation/vmc_schedule_plan/vmc_air_quality_adaptive.yaml)](https://my.home-assistant.io/redirect/blueprint_import/?url=https://raw.githubusercontent.com/darius1907/ha_vmc_helty_flow/main/blueprints/automation/vmc_schedule_plan/vmc_air_quality_adaptive.yaml)
+[![Importa in Home Assistant](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fraw.githubusercontent.com%2Fdarius1907%2Fha_vmc_helty_flow%2Fmain%2Fblueprints%2Fautomation%2Fvmc_schedule_plan%2Fvmc_air_quality_adaptive.yaml)
 
 Regola automaticamente la velocità VMC in base ai livelli di CO2 (e VOC opzionale). Il massimo del comfort intelligente.
 
@@ -40,7 +40,7 @@ Regola automaticamente la velocità VMC in base ai livelli di CO2 (e VOC opziona
 
 ## 💧 VMC Humidity Control – Controllo umidità automatico
 
-[![Importa in Home Assistant](https://my.home-assistant.io/redirect/blueprint_import/badge.svg?url=https://raw.githubusercontent.com/darius1907/ha_vmc_helty_flow/main/blueprints/automation/vmc_schedule_plan/vmc_humidity_control.yaml)](https://my.home-assistant.io/redirect/blueprint_import/?url=https://raw.githubusercontent.com/darius1907/ha_vmc_helty_flow/main/blueprints/automation/vmc_schedule_plan/vmc_humidity_control.yaml)
+[![Importa in Home Assistant](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fraw.githubusercontent.com%2Fdarius1907%2Fha_vmc_helty_flow%2Fmain%2Fblueprints%2Fautomation%2Fvmc_schedule_plan%2Fvmc_humidity_control.yaml)
 
 Attiva il boost VMC automaticamente quando l'umidità supera la soglia configurata (doccia, cottura). Previene muffe e condensa.
 
@@ -50,7 +50,7 @@ Attiva il boost VMC automaticamente quando l'umidità supera la soglia configura
 
 ## 🔔 VMC Filter Reminder – Promemoria manutenzione filtro
 
-[![Importa in Home Assistant](https://my.home-assistant.io/redirect/blueprint_import/badge.svg?url=https://raw.githubusercontent.com/darius1907/ha_vmc_helty_flow/main/blueprints/automation/vmc_schedule_plan/vmc_filter_reminder.yaml)](https://my.home-assistant.io/redirect/blueprint_import/?url=https://raw.githubusercontent.com/darius1907/ha_vmc_helty_flow/main/blueprints/automation/vmc_schedule_plan/vmc_filter_reminder.yaml)
+[![Importa in Home Assistant](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fraw.githubusercontent.com%2Fdarius1907%2Fha_vmc_helty_flow%2Fmain%2Fblueprints%2Fautomation%2Fvmc_schedule_plan%2Fvmc_filter_reminder.yaml)
 
 Sistema completo di notifiche per la manutenzione del filtro VMC. Avvisi progressivi al 90% (~15970h), 95% (~16857h) e 100% (17744h) della vita del filtro.
 

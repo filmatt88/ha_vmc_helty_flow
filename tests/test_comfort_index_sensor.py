@@ -11,6 +11,7 @@ class TestVmcHeltyComfortIndexSensor:
     def test_init(self):
         """Test inizializzazione del sensore."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         mock_coordinator.device_id = "test_device"
         mock_coordinator.name = "testvmc"
         mock_coordinator.name_slug = "vmc_helty_testvmc"
@@ -26,6 +27,7 @@ class TestVmcHeltyComfortIndexSensor:
     def test_native_value_no_data(self):
         """Test valore con dati mancanti."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         mock_coordinator.data = None
 
         sensor = VmcHeltyComfortIndexSensor(mock_coordinator)
@@ -34,6 +36,7 @@ class TestVmcHeltyComfortIndexSensor:
     def test_native_value_no_sensors_data(self):
         """Test valore con dati sensori mancanti."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         mock_coordinator.data = {"other_key": "value"}
 
         sensor = VmcHeltyComfortIndexSensor(mock_coordinator)
@@ -42,6 +45,7 @@ class TestVmcHeltyComfortIndexSensor:
     def test_native_value_invalid_sensors_data(self):
         """Test valore con dati sensori non validi."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         mock_coordinator.data = {"sensors": "INVALID_DATA"}
 
         sensor = VmcHeltyComfortIndexSensor(mock_coordinator)
@@ -50,6 +54,7 @@ class TestVmcHeltyComfortIndexSensor:
     def test_native_value_insufficient_data(self):
         """Test valore con dati insufficienti."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         mock_coordinator.data = {"sensors": "VMGI,200,150"}  # Troppo pochi campi
 
         sensor = VmcHeltyComfortIndexSensor(mock_coordinator)
@@ -58,6 +63,7 @@ class TestVmcHeltyComfortIndexSensor:
     def test_calculation_optimal_conditions(self):
         """Test calcolo in condizioni ottimali."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         # VMGI,220,150,500,800,0,0,0,0,0,0,150,0,0,0 - temp=22.0°C, humidity=50.0%
         mock_coordinator.data = {
             "sensors": "VMGI,220,150,500,800,0,0,0,0,0,0,150,0,0,0",
@@ -74,6 +80,7 @@ class TestVmcHeltyComfortIndexSensor:
     def test_calculation_good_conditions(self):
         """Test calcolo in buone condizioni."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         # VMGI,200,150,400,800,0,0,0,0,0,0,150,0,0,0 - temp=20.0°C, humidity=40.0%
         mock_coordinator.data = {
             "sensors": "VMGI,200,150,400,800,0,0,0,0,0,0,150,0,0,0",
@@ -90,6 +97,7 @@ class TestVmcHeltyComfortIndexSensor:
     def test_calculation_poor_conditions(self):
         """Test calcolo in condizioni povere."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         # VMGI,100,150,200,800,0,0,0,0,0,0,150,0,0,0 - temp=10.0°C, humidity=20.0%
         mock_coordinator.data = {
             "sensors": "VMGI,100,150,200,800,0,0,0,0,0,0,150,0,0,0",
@@ -105,6 +113,7 @@ class TestVmcHeltyComfortIndexSensor:
     def test_calculation_extreme_conditions(self):
         """Test calcolo in condizioni estreme."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         sensor = VmcHeltyComfortIndexSensor(mock_coordinator)
 
         # Temperatura molto alta, umidità molto alta
@@ -126,6 +135,7 @@ class TestVmcHeltyComfortIndexSensor:
     def test_calculation_zero_humidity(self):
         """Test gestione umidità zero."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         mock_coordinator.data = {
             "sensors": "VMGI,220,150,0,800,0,0,0,0,0,0,150,0,0,0",  # 22°C, 0%
         }
@@ -136,6 +146,7 @@ class TestVmcHeltyComfortIndexSensor:
     def test_calculation_excessive_humidity(self):
         """Test gestione umidità eccessiva."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         mock_coordinator.data = {
             "sensors": "VMGI,220,150,1000,800,0,0,0,0,0,0,150,0,0,0",  # 22°C, 100%
         }
@@ -150,6 +161,7 @@ class TestVmcHeltyComfortIndexSensor:
     def test_temperature_comfort_function(self):
         """Test funzione di calcolo comfort termico."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         sensor = VmcHeltyComfortIndexSensor(mock_coordinator)
 
         # Test range ottimale (20-24°C)
@@ -172,6 +184,7 @@ class TestVmcHeltyComfortIndexSensor:
     def test_humidity_comfort_function(self):
         """Test funzione di calcolo comfort igrometrico."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         sensor = VmcHeltyComfortIndexSensor(mock_coordinator)
 
         # Test range ottimale (40-60%)
@@ -194,6 +207,7 @@ class TestVmcHeltyComfortIndexSensor:
     def test_extra_state_attributes_complete(self):
         """Test attributi aggiuntivi con dati completi."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         # VMGI,220,150,500,800,0,0,0,0,0,0,150,0,0,0 - temp=22.0°C, humidity=50.0%
         mock_coordinator.data = {
             "sensors": "VMGI,220,150,500,800,0,0,0,0,0,0,150,0,0,0",
@@ -223,6 +237,7 @@ class TestVmcHeltyComfortIndexSensor:
     def test_extra_state_attributes_no_data(self):
         """Test attributi aggiuntivi senza dati."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         mock_coordinator.data = None
 
         sensor = VmcHeltyComfortIndexSensor(mock_coordinator)
@@ -234,6 +249,7 @@ class TestVmcHeltyComfortIndexSensor:
     def test_comfort_categories_classification(self):
         """Test classificazione categorie di comfort."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         sensor = VmcHeltyComfortIndexSensor(mock_coordinator)
 
         test_cases = [
@@ -274,6 +290,7 @@ class TestVmcHeltyComfortIndexSensor:
     def test_invalid_data_types(self):
         """Test gestione di tipi di dati non validi."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         sensor = VmcHeltyComfortIndexSensor(mock_coordinator)
 
         # Test con dati malformati
@@ -291,6 +308,7 @@ class TestVmcHeltyComfortIndexSensor:
     def test_mathematical_consistency(self):
         """Test consistenza matematica dei calcoli."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         sensor = VmcHeltyComfortIndexSensor(mock_coordinator)
 
         # Test che condizioni migliori diano valori più alti

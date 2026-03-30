@@ -118,18 +118,72 @@
           "scan_interval": "Aktualisierungsintervall (Sekunden)",
           "timeout": "Verbindungszeitüberschreitung (Sekunden)",
           "retry_attempts": "Wiederverbindungsversuche",
-          "room_volume": "Raumvolumen (m³)"
+          "room_volume": "Raumvolumen (m³)",
+          "configure_easc": "Erweiterte Sensoren konfigurieren (EASC)"
         },
         "data_description": {
           "scan_interval": "Häufigkeit der Datenaktualisierung vom VMC-Gerät (30-600 Sekunden)",
           "timeout": "Zeitüberschreitung für TCP-Verbindungen zum Gerät (5-60 Sekunden)",
           "retry_attempts": "Anzahl der Versuche bei Kommunikationsfehlern (1-10)",
-          "room_volume": "Raumvolumen in Kubikmetern für genaue Luftwechselberechnungen (1-1000 m³)"
+          "room_volume": "Raumvolumen in Kubikmetern für genaue Luftwechselberechnungen (1-1000 m³)",
+          "configure_easc": "Aktivieren für die Konfiguration erweiterter Sensoren (absolute Luftfeuchtigkeit, Taupunkt, Komfortindex, Taupunktdelta)"
+        }
+      },
+      "advanced_sensors": {
+        "title": "Erweiterte EASC-Sensoren",
+        "description": "Datenquellen für die erweiterten berechneten Sensoren konfigurieren. Wählen Sie eine HA-Entität oder lassen Sie das Feld leer, um die VMC-Gerätedaten zu verwenden.",
+        "data": {
+          "abs_hum_enabled": "Absolute Luftfeuchtigkeit aktivieren",
+          "abs_hum_temperature_source": "Absolute Luftfeuchtigkeit — Temperaturquelle",
+          "abs_hum_humidity_source": "Absolute Luftfeuchtigkeit — Feuchtigkeitsquelle",
+          "abs_hum_formula": "Absolute Luftfeuchtigkeit — Formel",
+          "dew_point_enabled": "Taupunkt aktivieren",
+          "dew_point_temperature_source": "Taupunkt — Temperaturquelle",
+          "dew_point_humidity_source": "Taupunkt — Feuchtigkeitsquelle",
+          "dew_point_formula": "Taupunkt — Formel",
+          "comfort_index_enabled": "Komfortindex aktivieren",
+          "comfort_index_temperature_source": "Komfortindex — Temperaturquelle",
+          "comfort_index_humidity_source": "Komfortindex — Feuchtigkeitsquelle",
+          "comfort_index_formula": "Komfortindex — Formel",
+          "dew_point_delta_enabled": "Taupunktdelta aktivieren",
+          "dew_point_delta_temperature_internal": "Taupunktdelta — Innentemperatur",
+          "dew_point_delta_temperature_external": "Taupunktdelta — Außentemperatur",
+          "dew_point_delta_humidity_source": "Taupunktdelta — Feuchtigkeitsquelle",
+          "dew_point_delta_formula": "Taupunktdelta — Formel"
+        },
+        "data_description": {
+          "abs_hum_enabled": "Sensor für berechnete absolute Luftfeuchtigkeit aktivieren (g/m³)",
+          "abs_hum_temperature_source": "Temperatursensor wählen oder leer lassen für VMC-Gerät",
+          "abs_hum_humidity_source": "Feuchtigkeitssensor wählen oder leer lassen für VMC-Gerät",
+          "abs_hum_formula": "Magnus-Tetens (Standard) oder August-Roche-Magnus (WMO, genauer 0-60°C)",
+          "dew_point_enabled": "Sensor für berechneten Taupunkt aktivieren (°C)",
+          "dew_point_temperature_source": "Temperatursensor wählen oder leer lassen für VMC-Gerät",
+          "dew_point_humidity_source": "Feuchtigkeitssensor wählen oder leer lassen für VMC-Gerät",
+          "dew_point_formula": "Magnus-Tetens (Standard) oder August-Roche-Magnus (WMO, genauer 0-60°C)",
+          "comfort_index_enabled": "Thermoigrometrischen Komfortindex-Sensor aktivieren (0-100)",
+          "comfort_index_temperature_source": "Temperatursensor wählen oder leer lassen für VMC-Gerät",
+          "comfort_index_humidity_source": "Feuchtigkeitssensor wählen oder leer lassen für VMC-Gerät",
+          "comfort_index_formula": "Magnus-Tetens (Standard) oder August-Roche-Magnus (WMO, genauer 0-60°C)",
+          "dew_point_delta_enabled": "Delta zwischen Innen- und Außentaupunkt aktivieren (°C)",
+          "dew_point_delta_temperature_internal": "Sensor für Innentemperatur wählen oder leer lassen für VMC-Gerät",
+          "dew_point_delta_temperature_external": "Sensor für Außentemperatur wählen oder leer lassen für VMC-Gerät",
+          "dew_point_delta_humidity_source": "Feuchtigkeitssensor wählen oder leer lassen für VMC-Gerät",
+          "dew_point_delta_formula": "Magnus-Tetens (Standard) oder August-Roche-Magnus (WMO, genauer 0-60°C)"
         }
       }
+    },
+    "error": {
+      "invalid_easc_source": "Ungültige oder nicht verfügbare Entität",
+      "invalid_easc_formula": "Ungültige Formel: 'Magnus-Tetens' oder 'August-Roche-Magnus' auswählen"
     }
   },
   "selector": {
+    "formula": {
+      "options": {
+        "magnus": "Magnus-Tetens",
+        "custom": "August-Roche-Magnus (WMO)"
+      }
+    },
     "scan_mode": {
       "options": {
         "full": "Vollständiger Scan",

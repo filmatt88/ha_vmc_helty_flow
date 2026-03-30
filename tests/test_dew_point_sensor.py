@@ -3,6 +3,8 @@
 import math
 from unittest.mock import Mock
 
+import pytest
+
 from custom_components.vmc_helty_flow.sensor import VmcHeltyDewPointSensor
 
 
@@ -12,6 +14,7 @@ class TestVmcHeltyDewPointSensor:
     def test_init(self):
         """Test inizializzazione del sensore."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         mock_coordinator.ip = "192.168.1.100"
         mock_coordinator.name = "Test VMC"
         mock_coordinator.name_slug = "vmc_helty_testvmc"
@@ -27,6 +30,7 @@ class TestVmcHeltyDewPointSensor:
     def test_native_value_no_data(self):
         """Test calcolo senza dati."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         mock_coordinator.data = None
 
         sensor = VmcHeltyDewPointSensor(mock_coordinator)
@@ -36,6 +40,7 @@ class TestVmcHeltyDewPointSensor:
     def test_native_value_no_sensors_data(self):
         """Test calcolo senza dati sensori."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         mock_coordinator.data = {
             "sensors": "",  # Dati sensori vuoti
         }
@@ -47,6 +52,7 @@ class TestVmcHeltyDewPointSensor:
     def test_native_value_invalid_sensors_data(self):
         """Test calcolo con dati sensori non validi."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         mock_coordinator.data = {
             "sensors": "INVALID_DATA",
         }
@@ -58,6 +64,7 @@ class TestVmcHeltyDewPointSensor:
     def test_native_value_zero_humidity(self):
         """Test calcolo con umidità zero."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         mock_coordinator.data = {
             "temperature_internal": 20.0,
             "humidity": 0.0,
@@ -70,6 +77,7 @@ class TestVmcHeltyDewPointSensor:
     def test_calculation_standard_conditions(self):
         """Test calcolo punto di rugiada in condizioni standard."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         # VMGI,200,150,600,800,0,0,0,0,0,0,150,0,0,0 - temp=20.0°C, humidity=60.0%
         mock_coordinator.data = {
             "sensors": "VMGI,200,150,600,800,0,0,0,0,0,0,150,0,0,0",
@@ -93,6 +101,7 @@ class TestVmcHeltyDewPointSensor:
     def test_calculation_high_humidity(self):
         """Test calcolo con alta umidità."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         # VMGI,250,180,900,800,0,0,0,0,0,0,150,0,0,0 - temp=25.0°C, humidity=90.0%
         mock_coordinator.data = {
             "sensors": "VMGI,250,180,900,800,0,0,0,0,0,0,150,0,0,0",
@@ -107,6 +116,7 @@ class TestVmcHeltyDewPointSensor:
     def test_calculation_low_humidity(self):
         """Test calcolo con bassa umidità."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         # VMGI,200,150,300,800,0,0,0,0,0,0,150,0,0,0 - temp=20.0°C, humidity=30.0%
         mock_coordinator.data = {
             "sensors": "VMGI,200,150,300,800,0,0,0,0,0,0,150,0,0,0",
@@ -121,6 +131,7 @@ class TestVmcHeltyDewPointSensor:
     def test_calculation_edge_cases(self):
         """Test calcolo in casi limite."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         sensor = VmcHeltyDewPointSensor(mock_coordinator)
 
         # Umidità molto alta (99%)
@@ -148,6 +159,7 @@ class TestVmcHeltyDewPointSensor:
     def test_extra_state_attributes_complete(self):
         """Test attributi aggiuntivi con dati completi."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         # VMGI,220,180,550,800,0,0,0,0,0,0,150,0,0,0 - temp=22.0°C, humidity=55.0%
         mock_coordinator.data = {
             "sensors": "VMGI,220,180,550,800,0,0,0,0,0,0,150,0,0,0",
@@ -157,9 +169,11 @@ class TestVmcHeltyDewPointSensor:
         attributes = sensor.extra_state_attributes
 
         assert attributes is not None
-        assert attributes["formula"] == "Magnus-Tetens"
-        assert attributes["temperature_source"] == 22.0
-        assert attributes["humidity_source"] == 55.0
+        assert attributes["formula"] == "magnus"
+        assert attributes["temperature_source"] == "vmc"
+        assert attributes["humidity_source"] == "vmc"
+        assert attributes["temperature_value"] == pytest.approx(22.0)
+        assert attributes["humidity_value"] == pytest.approx(55.0)
         assert attributes["precision"] == "±0.2°C"
         assert attributes["standard"] == "ASHRAE 55-2020"
         assert "comfort_level" in attributes
@@ -168,6 +182,7 @@ class TestVmcHeltyDewPointSensor:
     def test_extra_state_attributes_no_data(self):
         """Test attributi aggiuntivi senza dati."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         mock_coordinator.data = None
 
         sensor = VmcHeltyDewPointSensor(mock_coordinator)
@@ -178,6 +193,7 @@ class TestVmcHeltyDewPointSensor:
     def test_comfort_level_classification(self):
         """Test classificazione dei livelli di comfort."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         sensor = VmcHeltyDewPointSensor(mock_coordinator)
 
         # Test diversi valori di punto di rugiada e livelli di comfort
@@ -216,6 +232,7 @@ class TestVmcHeltyDewPointSensor:
     def test_mathematical_consistency(self):
         """Test consistenza matematica della formula Magnus-Tetens."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         sensor = VmcHeltyDewPointSensor(mock_coordinator)
 
         # Test che il punto di rugiada sia sempre <= temperatura
@@ -236,6 +253,7 @@ class TestVmcHeltyDewPointSensor:
     def test_calculation_precision(self):
         """Test precisione del calcolo."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         # VMGI,235,180,679,800,0,0,0,0,0,0,150,0,0,0 - temp=23.5°C, humidity=67.9%
         mock_coordinator.data = {
             "sensors": "VMGI,235,180,679,800,0,0,0,0,0,0,150,0,0,0",
@@ -251,6 +269,7 @@ class TestVmcHeltyDewPointSensor:
     def test_invalid_data_types(self):
         """Test gestione di tipi di dati non validi."""
         mock_coordinator = Mock()
+        mock_coordinator.config_entry.options = {}
         sensor = VmcHeltyDewPointSensor(mock_coordinator)
 
         # Test con dati malformati

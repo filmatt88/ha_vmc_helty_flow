@@ -146,37 +146,40 @@ Questa directory contiene il piano di sviluppo completo per VMC Helty Flow v1.2.
 
 ## 📊 Stato Corrente (2026-03-27)
 
-### Milestone Attiva: v1.2.0
+### Milestone Attiva: v1.2.0 (EASC)
 **Target**: 2026-05-15
 **Completamento**: ░░░░░░░░░░ 0%
 
-### Sprint Corrente: Sprint 3.1 (Beta Feedback & Fixes)
-**Start**: 2026-03-27
-**End**: 2026-04-02
-**Focus**: Raccolta feedback community e fix bug da beta v1.1.1
+### Sprint Corrente: Sprint 2.1 (EASC Infrastructure & Sensor Refactoring)
+**Start**: 2026-04-03
+**End**: 2026-04-16
+**Focus**: Implementazione EASCDataProvider, config flow UI e refactoring sensori evoluti
 
 ### Prossimi Sprint
-- Sprint 3.2: Blueprint Aggiuntivi (3–9 Aprile)
-- Sprint 3.3: Dashboard Package (10–16 Aprile)
-- Sprint 3.4: Final Polish & Release (17 Aprile – 1 Maggio)
+- Sprint 2.2: EASC Advanced & Release v1.2.0 (17 Apr – 1 Mag)
+- Sprint 3.1: Nuovi Sensori SENS-004/005 (19–21 Mag)
+- Sprint 3.2: Blueprint Aggiuntivi BLU-005/006/007 (22–28 Mag)
+- Sprint 3.3: Release v1.3.0 (29–31 Mag)
 
 ### Key Deliverable in Progress
 - ✅ v1.1.1 rilasciato (tag + GitHub Release)
-- 🔄 FEED-001 — Post feedback su GitHub Discussions e HA Community
-- ⏳ SENS-005 — `VmcHeltyFilterWarningBinarySensor`
-- ⏳ SENS-004 — `VmcHeltyRunningTimeSensor`
-- ⏳ BLU-005/006/007 — 3 blueprint aggiuntivi
+- ✅ SENS-005 — `VmcHeltyFilterWarningBinarySensor` implementato
+- ⏳ EASC-001/002/003 — Infrastructure (config schema, data provider, config flow UI)
+- ⏳ EASC-004/005/006/007 — Refactoring sensori evoluti
+- ⏳ SENS-004 — `VmcHeltyRunningTimeSensor` (Sprint 3.1)
+- ⏳ BLU-005/006/007 — 3 blueprint aggiuntivi (Sprint 3.2)
 
 ---
 
 ## 🎯 Obiettivi Timeline
 
 ```
-Marzo 2026    │ ▓▓▓▓ Sprint 1.1-1.3 (Blueprint + Sensori)
-Aprile 2026   │ ▓▓▓▓▓▓▓ Sprint 3.1-3.2 (Feedback + Blueprint Extra)
-Maggio 2026   │ ▓▓▓▓ Sprint 3.3-3.4 (Dashboard + Release v1.2.0)
-Giugno 2026   │ ▓▓▓▓ Sprint 4.1-4.2 (Gold Quality + Energy)
-Luglio 2026   │ ▓ Sprint 4.3-4.4 (Scene + Release v1.3.0)
+Marzo 2026    │ ▓▓▓▓ Sprint 1.1-1.3 (Blueprint + Sensori) → v1.1.1 ✅
+Aprile 2026   │ ▓▓▓▓▓▓▓ Sprint 2.1 (EASC Infra + Refactoring)
+Maggio 2026   │ ▓▓▓▓ Sprint 2.2 (EASC Advanced + Release v1.2.0)
+Maggio 2026   │ ▓▓▓▓ Sprint 3.1-3.3 (Sensori + Blueprint + Release v1.3.0)
+Agosto 2026   │ ▓▓▓▓ Sprint 4.1-4.2 (Package + Dashboard + Release v1.4.0)
+Novembre 2026 │ ▓▓▓▓▓ Sprint 5.1-5.4 (Gold + Energy + Scene → v1.5.0)
 ```
 
 ---
@@ -185,24 +188,24 @@ Luglio 2026   │ ▓ Sprint 4.3-4.4 (Scene + Release v1.3.0)
 
 Task implementabili in 1-2 giorni (entry point per contributors):
 
-1. **Filter Warning Binary Sensor** (1h)
-   - File: `custom_components/vmc_helty_flow/sensor.py`
-   - Task: SENS-005 in PROJECT_ROADMAP.md
+1. **EASC Data Source Provider** (4h) — Sprint 2.1
+   - File: `custom_components/vmc_helty_flow/` (nuova classe)
+   - Task: EASC-002 in PROJECT_ROADMAP.md
    - Priority: 🔴 Alta
 
-2. **Running Time Sensor** (2h)
+2. **Config schema validation EASC** (3h) — Sprint 2.1
+   - Task: EASC-001 in PROJECT_ROADMAP.md
+   - Priority: 🔴 Alta
+
+3. **Running Time Sensor** (2h) — Sprint 3.1
    - File: `custom_components/vmc_helty_flow/sensor.py`
    - Task: SENS-004 in PROJECT_ROADMAP.md
    - Priority: 🟢 Bassa
 
-3. **Blueprint: Temperature Compensation** (4h)
+4. **Blueprint: Temperature Compensation** (4h) — Sprint 3.2
    - File: `blueprints/automation/vmc_temperature_compensation.yaml` (da creare)
    - Task: BLU-005 in PROJECT_ROADMAP.md
    - Priority: 🟡 Media
-
-4. **Post feedback su Forum HA Community** (1h)
-   - Task: FEED-001 in PROJECT_ROADMAP.md
-   - Priority: 🔴 Alta
 
 ---
 
