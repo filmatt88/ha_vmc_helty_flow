@@ -562,13 +562,6 @@ easc_config:
   - **Effort**: 4h ✅ **COMPLETATO 2026-03-27**
   - **Priority**: 🔴 Alta
 
-- [ ] **REL-014**: Tag beta v1.2.0-beta
-  - [ ] Commit e push
-  - [ ] `git tag v1.2.0-beta`
-  - [ ] Push tag a remotes
-  - **Effort**: 15min
-  - **Priority**: 🟡 Media
-
 - [x] **DOC-013**: Aggiorna README principale
   - [x] Sezione EASC con link a `docs/EXTERNAL_ADVANCED_SENSORS.md`
   - [x] Lista sensori aggiornata con tag `(EASC-enabled)` + link documentazione
@@ -586,7 +579,7 @@ easc_config:
   - **Priority**: 🔴 Alta
 
 - [ ] **REL-005**: Merge feature branch
-  - [ ] Merge `feature/v1.2.0` → `main`
+  - [ ] Merge `milestone-1.2` → `main`
   - [ ] Resolve conflicts (se presenti)
   - [ ] Verify CI/CD passa
   - **Effort**: 1h
@@ -629,6 +622,12 @@ easc_config:
 
 #### Task Checklist
 
+- [ ] **REL-022**: Create feature branch
+  - [ ] Merge `feature/v1.3.0` → `main`
+  - [ ] Verify CI/CD passa
+  - **Effort**: 30min
+  - **Priority**: 🔴 Alta
+
 - [ ] **SENS-004**: Implementa `VmcHeltyRunningTimeSensor`
   - [ ] Tempo totale funzionamento (hours)
   - [ ] Device class: duration
@@ -654,14 +653,6 @@ easc_config:
   - [ ] Threshold: min inverno (-5°C), max estate (35°C)
   - [ ] Test con dati reali
   - **Effort**: 4h
-  - **Priority**: 🟡 Media
-
-- [ ] **BLU-006**: Crea `vmc_presence_based.yaml`
-  - [ ] Logic: velocità bassa se casa vuota
-  - [ ] Input: presence sensor (binary_sensor.occupancy)
-  - [ ] Delay configurabile (es. 15min)
-  - [ ] Test presence on/off transitions
-  - **Effort**: 3h
   - **Priority**: 🟡 Media
 
 - [ ] **BLU-007**: Crea `vmc_energy_saving.yaml`
