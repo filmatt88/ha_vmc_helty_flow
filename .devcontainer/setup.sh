@@ -34,7 +34,7 @@ mkdir -p /tmp/test_config
 mkdir -p /tmp/test_config/custom_components
 
 # Crea un symlink dell'integrazione nella directory di test
-ln -sf /workspaces/vmc_helty_flow/custom_components/vmc_helty_flow /tmp/test_config/custom_components/
+ln -sf /workspaces/ha_vmc_helty_flow/custom_components/vmc_helty_flow /tmp/test_config/custom_components/
 
 # Crea una configurazione minima di Home Assistant per i test
 cat > /tmp/test_config/configuration.yaml << 'EOF'
@@ -76,8 +76,8 @@ history:
 EOF
 
 # Setup per IntelliJ IDEA
-IDEA_DIR="/workspaces/vmc_helty_flow/.idea"
-INTELLIJ_CONFIG_DIR="/workspaces/vmc_helty_flow/.devcontainer/intellij"
+IDEA_DIR="/workspaces/ha_vmc_helty_flow/.idea"
+INTELLIJ_CONFIG_DIR="/workspaces/ha_vmc_helty_flow/.devcontainer/intellij"
 
 # Crea la cartella .idea se non esiste
 mkdir -p "$IDEA_DIR"

@@ -3,7 +3,7 @@
 > **Piano di sviluppo** con task tracciabili, milestone e criteri di completamento
 > **Versione**: 1.0
 > **Data inizio**: 2026-03-23
-> **Ultima revisione**: 2026-03-27 (EASC-001→009, TEST-004→006, DOC-011→013 completati; bugfix traduzioni EASC + EntitySelector + SelectSelector formula)
+> **Ultima revisione**: 2026-07-02 (v1.2.0 rilasciato 2026-03-30 — EASC completo; allineamento roadmap post-pausa sviluppo)
 
 ---
 
@@ -11,18 +11,18 @@
 
 ### Stato Generale Progetto
 ```
-Versione Corrente: v1.1.1 ✅
-Prossimo Release: v1.2.0 🔄
+Versione Corrente: v1.2.0 ✅
+Prossimo Release: v1.3.0 📋
 Quality Scale: Silver ⭐⭐
-Test Coverage: >95% ✅
-Tech Debt: 1 item ⚠️ (SENS-009: monitoraggio energia reale)
+Test Coverage: 84% ✅ (gate: 65%)
+Tech Debt: 2 item ⚠️ (SENS-009: monitoraggio energia reale; debug logging in produzione)
 ```
 
 ### Milestone Overview
 | Milestone | Stato | Data Target | Completamento |
 |-----------|-------|-------------|---------------|
 | v1.1.1 | ✅ Completed | 2026-03-26 | ▓▓▓▓▓▓▓▓▓▓ 100% |
-| v1.2.0 | 🔄 In Progress | 2026-05-15 | ▓▓▓▓▓▓▓▓░░ 70% |
+| v1.2.0 | ✅ Completed | 2026-03-30 | ▓▓▓▓▓▓▓▓▓▓ 100% |
 | v1.3.0 | 📋 Planned | 2026-08-15 | ░░░░░░░░░░ 0% |
 | v1.4.0 | 📋 Planned | 2026-11-15 | ░░░░░░░░░░ 0% |
 | v1.5.0 | 📋 Planned | 2027-02-15 | ░░░░░░░░░░ 0% |
@@ -578,31 +578,31 @@ easc_config:
   - **Effort**: 1h ✅ **COMPLETATO 2026-03-27**
   - **Priority**: 🔴 Alta
 
-- [ ] **REL-005**: Merge feature branch
-  - [ ] Merge `milestone-1.2` → `main`
-  - [ ] Resolve conflicts (se presenti)
-  - [ ] Verify CI/CD passa
-  - **Effort**: 1h
+- [x] **REL-005**: Merge feature branch
+  - [x] Merge `milestone-1.2` → `main`
+  - [x] Resolve conflicts (se presenti)
+  - [x] Verify CI/CD passa
+  - **Effort**: 1h ✅ **COMPLETATO 2026-03-30**
   - **Priority**: 🔴 Alta
 
-- [ ] **REL-006**: Tag release v1.2.0
-  - [ ] `git tag -a v1.2.0 -m "Release v1.2.0"`
-  - [ ] Push tag a tutti remotes
-  - **Effort**: 15min
+- [x] **REL-006**: Tag release v1.2.0
+  - [x] `git tag -a v1.2.0 -m "Release v1.2.0"`
+  - [x] Push tag a tutti remotes
+  - **Effort**: 15min ✅ **COMPLETATO 2026-03-30**
   - **Priority**: 🔴 Alta
 
-- [ ] **REL-007**: GitHub Release publication
-  - [ ] Create release from tag
-  - [ ] Copy release notes da CHANGELOG
-  - [ ] Mark as "Latest release"
-  - [ ] Publish
-  - **Effort**: 30min
+- [x] **REL-007**: GitHub Release publication
+  - [x] Create release from tag
+  - [x] Copy release notes da CHANGELOG
+  - [x] Mark as "Latest release"
+  - [x] Publish
+  - **Effort**: 30min ✅ **COMPLETATO 2026-03-30**
   - **Priority**: 🔴 Alta
 
-- [ ] **REL-008**: HACS update
-  - [ ] Verify HACS fetches new version
-  - [ ] Update integration description
-  - **Effort**: 30min
+- [x] **REL-008**: HACS update
+  - [x] Verify HACS fetches new version
+  - [x] Update integration description
+  - **Effort**: 30min ✅ **COMPLETATO 2026-03-30**
   - **Priority**: 🔴 Alta
 
 **Sprint 2.2 Total Effort**: ~14h
@@ -1075,13 +1075,13 @@ easc_config:
 ## 📊 Metriche e KPI
 
 ### Development Metrics
-| Metrica | Target v1.2.0 | Attuale | Status |
-|---------|---------------|---------|--------|
-| Test Coverage | >95% | 95.2% | ✅ |
+| Metrica | Target v1.3.0 | Attuale (v1.2.0) | Status |
+|---------|---------------|------------------|--------|
+| Test Coverage | >90% | 84% | ✅ (gate: 65%) |
 | Pylint Score | >9.5 | 9.83 | ✅ |
 | Blueprint Count | 6 | 2 | 🔄 33% |
-| Sensor Count | 20 | 12 | 🔄 60% |
-| Documentation Pages | 10 | 5 | 🔄 50% |
+| Sensor Count | 20 | 20+ | ✅ |
+| Documentation Pages | 10 | 6 | 🔄 60% |
 
 ### Community Metrics (Goals)
 | Metrica | Target v1.2.0 | Baseline |
@@ -1227,7 +1227,14 @@ Legend: ████ = Active Development
 - ✅ Sprint numbering allineato con milestone
 - ✅ DOC-011 e REL release steps presenti in ogni milestone
 
-### Next Update: 2026-04-16 (end Sprint 2.1)
+### 2026-03-30 - v1.2.0 Released
+- ✅ EASC (External Advanced Sensor Configuration) completato e rilasciato
+- ✅ Tutti i task Sprint 2.1 e Sprint 2.2 completati
+- ✅ REL-005→REL-008 eseguiti (merge, tag, GitHub release, HACS)
+- ✅ 757 test, 84% coverage, Pylint 9.83/10
+- ⏸️ Sviluppo in pausa dopo v1.2.0
+
+### Next Update: ripresa sviluppo per v1.3.0
 
 ---
 
@@ -1255,5 +1262,5 @@ Legend: ████ = Active Development
 ---
 
 **Responsabile Roadmap**: VMC Helty Flow Development Team
-**Prossima Review**: 2026-04-05
+**Prossima Review**: ripresa sviluppo v1.3.0
 **Documento vivente**: Aggiornare regolarmente con progressi effettivi

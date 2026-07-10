@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls /workspaces/ha_vmc_helty_flow/tests/test_*sensor*.py /workspaces/ha_vmc_helty_flow/tests/test_*humidity*.py)",
+      "Bash(python -m pytest --collect-only -q)"
+    ]
+  }
+}
